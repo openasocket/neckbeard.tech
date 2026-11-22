@@ -18,6 +18,13 @@
     [56, 189, 248],
     [245, 158, 11],
   ];
+  const HOLO_OVERDRIVE = [
+    [253, 224, 71],  // Super-Saiyan Molten Gold
+    [244, 63, 94],   // Crimson / Hyper Magenta Ki
+    [56, 189, 248],  // Electric Plasma Cyan
+  ];
+  let konamiActive = false;
+  let forceHeroBgRedraw = false;
   const GLYPHS = '01<>{}[]=+*#%$/\\|';
   const hash = (a, b, c = 0) => {
     let h = (a * 374761393 + b * 668265263 + c * 2147483647) | 0;
@@ -28,7 +35,10 @@
   const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
   const rgb = (c, a = 1) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
   const ease = (k) => 1 - Math.pow(1 - clamp(k), 3);
-  const holoAt = (u) => ((u = clamp(u)) < 0.5 ? mix(HOLO[0], HOLO[1], u * 2) : mix(HOLO[1], HOLO[2], (u - 0.5) * 2));
+  const holoAt = (u) => {
+    const pal = konamiActive ? HOLO_OVERDRIVE : HOLO;
+    return (u = clamp(u)) < 0.5 ? mix(pal[0], pal[1], u * 2) : mix(pal[1], pal[2], (u - 0.5) * 2);
+  };
   const glyph = (a, b) => GLYPHS[(hash(a, b, 3) * GLYPHS.length) | 0];
   const mono = (w, s) => `${w} ${s}px "JetBrains Mono", ui-monospace, Menlo, monospace`;
   const reduceMql = matchMedia('(prefers-reduced-motion: reduce)');
@@ -123,6 +133,13 @@
         const oid = og.createImageData(m.width, m.height);
         const od = oid.data;
 
+        var overlayOverdrive = document.createElement('canvas');
+        overlayOverdrive.width = m.width;
+        overlayOverdrive.height = m.height;
+        const oog = overlayOverdrive.getContext('2d');
+        const ooid = oog.createImageData(m.width, m.height);
+        const ood = ooid.data;
+
         for (let i = 0; i < d.length; i += 4) {
           const a = d[i + 3];
           if (a < 8) continue;
@@ -136,6 +153,12 @@
             od[i + 1] = Math.round(10 + edge * 145);
             od[i + 2] = Math.round(8 + edge * 70);
             od[i + 3] = Math.min(255, Math.round(a * (0.68 + ink * 0.28)));
+
+            // Overdrive mode: blazing golden & crimson-magenta anime aura rim-lighting on ink contours
+            ood[i] = Math.min(255, Math.round(28 + edge * 255));
+            ood[i + 1] = Math.min(255, Math.round(12 + edge * 215));
+            ood[i + 2] = Math.min(255, Math.round(20 + edge * 95));
+            ood[i + 3] = Math.min(255, Math.round(a * (0.74 + ink * 0.26)));
           } else {
             // Soft smoky emerald tint across the face & fedora interior so the silhouette
             // reads clearly while letting the glowing code characters shine through
@@ -143,6 +166,12 @@
             od[i + 1] = 44;
             od[i + 2] = 28;
             od[i + 3] = Math.round(a * 0.22);
+
+            // Overdrive mode: warm golden-amber inner ki glow across the character silhouette
+            ood[i] = 75;
+            ood[i + 1] = 42;
+            ood[i + 2] = 14;
+            ood[i + 3] = Math.round(a * 0.28);
           }
 
           // Light up code characters across the full character silhouette (strongest on face & ink edges)
@@ -150,6 +179,7 @@
           d[i] = d[i + 1] = d[i + 2] = 0;
         }
         og.putImageData(oid, 0, 0);
+        oog.putImageData(ooid, 0, 0);
         g.putImageData(id, 0, 0);
       } else {
         g.font = `900 ${size}px "Arial Black", Impact, system-ui, sans-serif`;
@@ -175,7 +205,7 @@
           b = [Math.min(b[0], x), Math.min(b[1], y), Math.max(b[2], x), Math.max(b[3], y)];
         }
       }
-      return { set, cells, box: b, overlay };
+      return { set, cells, box: b, overlay, overlayOverdrive };
     }
 
     function layout() {
@@ -217,7 +247,7 @@
       const b = bg.getContext('2d');
       b.clearRect(0, 0, W, H);
       b.font = mono(400, FS);
-      b.fillStyle = '#18241d';
+      b.fillStyle = konamiActive ? '#341d3f' : '#18241d';
       for (let y = 0; y < ROWS; y++) {
         let line = '';
         for (let x = 0; x < COLS; x++) line += SRC[((y + row) * COLS + x) % SRC.length];
@@ -227,32 +257,38 @@
     }
 
     function cellAt(x, y, v, ch, fill, glow, blur) {
-      ctx.globalAlpha = v * 0.12;
+      ctx.globalAlpha = v * (konamiActive ? 0.2 : 0.12);
       ctx.fillStyle = rgb(fill);
       ctx.fillRect(x * CW, y * LH + 3, CW + 0.5, LH + 0.5);
       ctx.globalAlpha = v;
-      ctx.fillStyle = rgb(mix(fill, [255, 255, 255], 0.1));
+      ctx.fillStyle = rgb(mix(fill, [255, 255, 255], konamiActive ? 0.28 : 0.1));
       ctx.shadowColor = glow;
-      ctx.shadowBlur = blur;
+      ctx.shadowBlur = konamiActive ? blur * 1.65 : blur;
       ctx.fillText(ch, x * CW, (y + 1) * LH);
       ctx.shadowBlur = 0;
     }
 
     function frame(t) {
       if (!ctx) return;
-      const row = Math.floor(t * 1.1);
-      if (row !== bgRow) drawBg(row);
+      const scrollSpeed = konamiActive ? 3.2 : 1.1;
+      const row = Math.floor(t * scrollSpeed);
+      if (row !== bgRow || forceHeroBgRedraw) {
+        forceHeroBgRedraw = false;
+        drawBg(row);
+      }
       ctx.clearRect(0, 0, W, H);
       ctx.drawImage(bg, 0, 0, W, H);
       ctx.font = mono(400, FS);
-      for (let k = 0; k < 36; k++) {
-        const tk = t * 0.7 + hash(k, 9);
+      const sparkCount = konamiActive ? 92 : 36;
+      const sparkPalette = ['#fde047', '#f43f5e', '#38bdf8', '#fef08a'];
+      for (let k = 0; k < sparkCount; k++) {
+        const tk = t * (konamiActive ? 1.85 : 0.7) + hash(k, 9);
         const i = (hash(k, Math.floor(tk)) * COLS * ROWS) | 0;
         const x = i % COLS;
         const y = (i / COLS) | 0;
         const a = Math.sin((tk % 1) * Math.PI);
-        ctx.globalAlpha = 0.45 * a;
-        ctx.fillStyle = '#74f0a0';
+        ctx.globalAlpha = (konamiActive ? 0.78 : 0.45) * a;
+        ctx.fillStyle = konamiActive ? sparkPalette[k % sparkPalette.length] : '#74f0a0';
         ctx.fillText(charAt(x, y, row), x * CW, (y + 1) * LH);
       }
       ctx.globalAlpha = 1;
@@ -277,22 +313,60 @@
         const x = i % COLS;
         const y = (i / COLS) | 0;
         const ch = switching ? glyph(i, Math.floor(t * 18)) : charAt(x, y, row);
-        const c = holo(x, y, t, s.mask ? s.mask.box : box);
-        cellAt(x, y, Math.max(v, switching ? 0.5 : 0), ch, c, rgb(c, 0.85), 11);
+        const c = holo(x, y, konamiActive ? t * 2.6 : t, s.mask ? s.mask.box : box);
+        cellAt(x, y, Math.max(v, switching ? 0.5 : 0), ch, c, rgb(c, 0.9), 11);
       }
       // Composite the shadowed ink portrait over the glowing code characters so the hero's
       // fedora, thick glasses, squinting eyes, and beard are always recognizable
-      const heroOverlay = seq.find((s) => s.mask && s.mask.overlay)?.mask?.overlay;
+      const heroMask = seq.find((s) => s.mask && s.mask.overlay)?.mask;
+      const heroOverlay = heroMask ? (konamiActive && heroMask.overlayOverdrive ? heroMask.overlayOverdrive : heroMask.overlay) : null;
       if (heroOverlay) {
         const transP = clamp((lt - starts[k]) / (SWITCH + FADE));
         const curHas = Boolean(cur.mask && cur.mask.overlay);
         const prevHas = Boolean(prev.mask && prev.mask.overlay);
-        let overlayAlpha = 0.28; // keep a subtle shadow silhouette visible even during "$1" and "3"
-        if (curHas && prevHas) overlayAlpha = 0.92;
-        else if (curHas) overlayAlpha = 0.28 + 0.64 * ease(transP);
-        else if (prevHas) overlayAlpha = 0.92 - 0.64 * ease(transP);
-        ctx.globalAlpha = overlayAlpha;
-        ctx.drawImage(heroOverlay, 0, 0, W, H);
+        let overlayAlpha = konamiActive ? 0.42 : 0.28;
+        if (curHas && prevHas) overlayAlpha = 0.95;
+        else if (curHas) overlayAlpha = overlayAlpha + (0.95 - overlayAlpha) * ease(transP);
+        else if (prevHas) overlayAlpha = 0.95 - (0.95 - overlayAlpha) * ease(transP);
+
+        if (konamiActive) {
+          // Anime / video-game level-up aura around the hero character + rising golden Ki sparks
+          const pulse = 0.5 + 0.5 * Math.sin(t * 6.5);
+          ctx.save();
+          ctx.globalAlpha = overlayAlpha;
+          ctx.shadowColor = pulse > 0.5 ? '#fde047' : '#f43f5e';
+          ctx.shadowBlur = 28 + 20 * pulse;
+          ctx.drawImage(heroOverlay, 0, 0, W, H);
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 16;
+          ctx.drawImage(heroOverlay, 0, 0, W, H);
+          ctx.restore();
+
+          // Rising golden & plasma-cyan energy sparks around the character silhouette
+          if (box) {
+            const bx0 = box[0] * CW;
+            const by0 = box[1] * LH;
+            const bw = Math.max(120, (box[2] - box[0]) * CW);
+            const bh = Math.max(120, (box[3] - box[1]) * LH);
+            ctx.save();
+            for (let sIdx = 0; sIdx < 28; sIdx++) {
+              const cycle = (t * (0.55 + (sIdx % 5) * 0.14) + hash(sIdx, 41)) % 1;
+              const sx = bx0 + hash(sIdx, 17) * bw + Math.sin(t * 4 + sIdx) * 14;
+              const sy = by0 + bh - cycle * (bh * 1.12);
+              const sa = Math.sin(cycle * Math.PI);
+              const sCol = sIdx % 3 === 0 ? '#fde047' : sIdx % 3 === 1 ? '#f43f5e' : '#38bdf8';
+              ctx.globalAlpha = 0.85 * sa;
+              ctx.fillStyle = sCol;
+              ctx.shadowColor = sCol;
+              ctx.shadowBlur = 12;
+              ctx.fillRect(sx, sy, 2.5, 10 + (sIdx % 4) * 4);
+            }
+            ctx.restore();
+          }
+        } else {
+          ctx.globalAlpha = overlayAlpha;
+          ctx.drawImage(heroOverlay, 0, 0, W, H);
+        }
       }
       ctx.globalAlpha = 1;
     }
@@ -1457,21 +1531,86 @@
       footerLog.textContent = `🧔 3:00 A.M. INCIDENT BRIDGE ARCHIVE (click neckbeard█ again for next entry):\n${entry}`;
     });
 
-    // Easter Egg 4: Secret Keyboard Triggers ("sudo", "vibe", "kafka", ":wq", and Konami Code)
+    // Easter Egg 4: Secret Keyboard Triggers ("sudo", "vibe", "kafka", ":wq", and Konami Code Level-Up Overdrive)
     let keyBuf = '';
     const konami = 'ArrowUp,ArrowUp,ArrowDown,ArrowDown,ArrowLeft,ArrowRight,ArrowLeft,ArrowRight,b,a';
     const seqBuf = [];
+    let konamiPill = null;
+
+    function playLevelUpChime(powerUp = true) {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        const ac = new AC();
+        const notes = powerUp ? [523.25, 659.25, 783.99, 987.77, 1046.5, 1318.5] : [783.99, 659.25, 523.25];
+        notes.forEach((freq, idx) => {
+          const osc = ac.createOscillator();
+          const gain = ac.createGain();
+          osc.type = idx === notes.length - 1 ? 'triangle' : 'square';
+          osc.frequency.setValueAtTime(freq, ac.currentTime + idx * 0.065);
+          gain.gain.setValueAtTime(0.055, ac.currentTime + idx * 0.065);
+          gain.gain.exponentialRampToValueAtTime(0.0008, ac.currentTime + idx * 0.065 + 0.24);
+          osc.connect(gain);
+          gain.connect(ac.destination);
+          osc.start(ac.currentTime + idx * 0.065);
+          osc.stop(ac.currentTime + idx * 0.065 + 0.25);
+        });
+      } catch {}
+    }
+
+    function triggerKonamiOverdrive(forceState) {
+      konamiActive = typeof forceState === 'boolean' ? forceState : !konamiActive;
+      forceHeroBgRedraw = true;
+      document.documentElement.classList.toggle('konami-overdrive', konamiActive);
+      const activeLvl = $('#bd-active-level');
+
+      if (konamiActive) {
+        if (activeLvl) activeLvl.textContent = 'lvl-99-ring-0';
+        playLevelUpChime(true);
+
+        // Screen shockwave + RPG/Anime Level-Up Banner
+        const flash = document.createElement('div');
+        flash.className = 'konami-flash';
+        const bannerEl = document.createElement('div');
+        bannerEl.className = 'konami-banner';
+        bannerEl.innerHTML =
+          '<b>⚡ LEVEL 99 RING-0 ARCHITECT AWAKENED ⚡</b>' +
+          '<span>+9,001 PARANOIA · +100% SQL PARAMETERIZATION · -300 LINES OF AI BLOAT</span>';
+        document.body.append(flash, bannerEl);
+        setTimeout(() => flash.remove(), 1350);
+        setTimeout(() => bannerEl.remove(), 3500);
+
+        if (!konamiPill) {
+          konamiPill = document.createElement('button');
+          konamiPill.type = 'button';
+          konamiPill.className = 'konami-pill';
+          konamiPill.textContent = '⚡ LVL 99 OVERDRIVE (click to power down)';
+          konamiPill.addEventListener('click', () => triggerKonamiOverdrive(false));
+          document.body.appendChild(konamiPill);
+        }
+
+        popCameo(
+          '⚡ *glasses flash opaque white* KONAMI OVERDRIVE ENGAGED (LVL 99 RING-0): My ThinkPad fan just hit 14,000 RPM. Every unindexed query and 5-layer AbstractFactoryBean in this sector has been vaporized.'
+        );
+      } else {
+        if (activeLvl) activeLvl.textContent = 'full';
+        playLevelUpChime(false);
+        if (konamiPill) {
+          konamiPill.remove();
+          konamiPill = null;
+        }
+        popCameo('🧔 Powering down from Ring-0 Overdrive back to normal 3 a.m. paranoia. Thermal paste temperatures stabilizing.');
+      }
+      return konamiActive;
+    }
+
     addEventListener('keydown', (e) => {
       if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
       seqBuf.push(e.key);
       if (seqBuf.length > 10) seqBuf.shift();
       if (seqBuf.join(',').toLowerCase() === konami.toLowerCase()) {
         seqBuf.length = 0;
-        const activeLvl = $('#bd-active-level');
-        if (activeLvl) activeLvl.textContent = 'ring-0-god-mode';
-        popCameo(
-          '🎩 *tips fedora once* KONAMI RING-0 GRAYBEARD MODE UNLOCKED: All 5-layer AbstractSingletonProxyFactoryBeans within a 50-mile radius have been garbage-collected.'
-        );
+        triggerKonamiOverdrive();
         return;
       }
       if (e.key.length === 1) {
@@ -1525,6 +1664,7 @@
       totalRants: RANTS.length,
       topics: () => Object.keys(RANTS_BY_TOPIC),
       rant: (topic) => { const q = nextRandomRant(topic); popCameo(q); return q; },
+      konami: () => triggerKonamiOverdrive(),
       thinkpad: 'X220 (i7-2640M, 16GB ECC-wishful, TrackPoint cat-tongue cap)',
       audit: () => {
         popCameo('🔍 Console /neckbeard-audit complete: 0 trackers on neckbeard.tech, but your browser has 47 open tabs eating 3.8 GB of RAM.');
