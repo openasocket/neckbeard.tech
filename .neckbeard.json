@@ -1,0 +1,10 @@
+{
+  "shared": true,
+  "load": "250 rps, p95 < 50ms",
+  "boundaries": {
+    "external": {
+      "ingress": ["worker.js->http-in"]
+    },
+    "internal": {}
+  }
+}

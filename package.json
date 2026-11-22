@@ -1,0 +1,18 @@
+{
+  "name": "neckbeard-tech",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "neckbeard.tech — Official website, project badges, and Cloudflare Agent-Ready discovery endpoints for NeckBeard",
+  "scripts": {
+    "build": "./build.sh",
+    "dev": "./build.sh && wrangler dev",
+    "deploy": "./build.sh && wrangler deploy",
+    "test": "./build.sh && node tests/agent-discovery.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openasocket/neckbeard.tech.git"
+  },
+  "license": "MIT"
+}

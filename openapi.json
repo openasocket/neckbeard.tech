@@ -1,0 +1,112 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NeckBeard Discovery & Agent Skills API (neckbeard.tech)",
+    "version": "0.2.0",
+    "description": "Public discovery endpoints for NeckBeard (https://neckbeard.tech) — the principal-engineer skillset and runtime guard for AI coding agents. All specifications, Agent Skills Discovery v0.2.0 skills, and project badges are public and require no authentication. See https://neckbeard.tech/auth.md and https://neckbeard.tech/agents.md."
+  },
+  "servers": [
+    {
+      "url": "https://neckbeard.tech"
+    }
+  ],
+  "externalDocs": {
+    "description": "NeckBeard Agent Manifest & Discovery Guide",
+    "url": "https://neckbeard.tech/agents.md"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Liveness and version check",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "The service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "service": { "type": "string" },
+                    "project": { "type": "string" },
+                    "version": { "type": "string" },
+                    "skills": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  },
+                  "required": ["ok", "service", "version", "skills"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/agent-skills/index.json": {
+      "get": {
+        "summary": "Agent Skills Discovery v0.2.0 catalog of the 5 NeckBeard skills with SHA-256 digests",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Agent Skills Discovery v0.2.0 JSON index",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/api-catalog": {
+      "get": {
+        "summary": "RFC 9727 API catalog linkset",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "RFC 9727 linkset+json",
+            "content": {
+              "application/linkset+json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index.json": {
+      "get": {
+        "summary": "Machine-readable index of NeckBeard skills, gates, hooks, hosts, and .neckbeard.json schema",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "NeckBeard machine index",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/llms.txt": {
+      "get": {
+        "summary": "Token-efficient LLM directory for neckbeard.tech",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Markdown LLM index",
+            "content": {
+              "text/markdown": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

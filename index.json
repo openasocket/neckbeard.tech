@@ -1,0 +1,68 @@
+{
+  "name": "NeckBeard",
+  "version": "0.2.0",
+  "publisher": "https://neckbeard.tech",
+  "repository": "https://github.com/openasocket/NeckBeard",
+  "license": "MIT",
+  "agent_manifest": "https://neckbeard.tech/agents.md",
+  "portable_ruleset": "https://neckbeard.tech/AGENTS.md",
+  "install_guide": "https://neckbeard.tech/INSTALL.md",
+  "skills_discovery": "https://neckbeard.tech/.well-known/agent-skills/index.json",
+  "api_catalog": "https://neckbeard.tech/.well-known/api-catalog",
+  "vibes_compatible": "https://www.itsavibe.ai",
+  "levels": ["lite", "full", "paranoid", "off"],
+  "level_aliases": { "ultra": "paranoid" },
+  "default_level": "full",
+  "gates": ["Safe", "Fast and scalable at the named number", "Done"],
+  "skills": [
+    {
+      "id": "neckbeard",
+      "role": "core-writing-rules",
+      "required": true,
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard/SKILL.md",
+      "command": "/neckbeard [lite|full|paranoid|off|load|map|share|band]"
+    },
+    {
+      "id": "neckbeard-review",
+      "role": "change-review",
+      "required": false,
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-review/SKILL.md",
+      "command": "/neckbeard-review [--ci]"
+    },
+    {
+      "id": "neckbeard-audit",
+      "role": "repository-audit",
+      "required": false,
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-audit/SKILL.md",
+      "command": "/neckbeard-audit [lite|complete] [path]"
+    },
+    {
+      "id": "neckbeard-debt",
+      "role": "accepted-risk-ledger",
+      "required": false,
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-debt/SKILL.md",
+      "command": "/neckbeard-debt"
+    },
+    {
+      "id": "neckbeard-gain",
+      "role": "local-telemetry-board",
+      "required": false,
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-gain/SKILL.md",
+      "command": "/neckbeard-gain"
+    }
+  ],
+  "hooks": ["SessionStart", "SubagentStart", "UserPromptSubmit", "PreToolUse"],
+  "project_config": {
+    "file": ".neckbeard.json",
+    "shared_by_default": true,
+    "external_sinks": ["http-in", "cli-in", "webhook-in", "http-out", "ci"],
+    "internal_sinks": ["auth", "sql", "fs", "serde", "proc", "crypto", "env", "ai"]
+  },
+  "badges": {
+    "pill_svg": "https://neckbeard.tech/assets/badge.svg",
+    "pill_png": "https://neckbeard.tech/assets/badge.png",
+    "seal_svg": "https://neckbeard.tech/assets/seal.svg",
+    "seal_png": "https://neckbeard.tech/assets/seal.png",
+    "social_card": "https://neckbeard.tech/assets/social-card.png"
+  }
+}

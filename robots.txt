@@ -1,0 +1,9 @@
+# robots.txt for https://neckbeard.tech
+# NeckBeard — The Principal Engineer for Your AI Coding Agent
+# For AI agents: start with https://neckbeard.tech/llms.txt or https://neckbeard.tech/agents.md
+
+User-agent: *
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
+Allow: /
+
+Sitemap: https://neckbeard.tech/sitemap.xml

@@ -1,0 +1,29 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://neckbeard.tech/api/",
+      "service-desc": [
+        {
+          "href": "https://neckbeard.tech/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://neckbeard.tech/auth.md",
+          "type": "text/markdown"
+        },
+        {
+          "href": "https://neckbeard.tech/agents.md",
+          "type": "text/markdown"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://neckbeard.tech/api/health",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

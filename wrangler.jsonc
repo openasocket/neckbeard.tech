@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "neckbeard-tech",
+  "main": "worker.js",
+  "compatibility_date": "2026-01-01",
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "routes": [
+    { "pattern": "neckbeard.tech", "custom_domain": true },
+    { "pattern": "www.neckbeard.tech", "custom_domain": true }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "APP_URL": "https://neckbeard.tech"
+  }
+}

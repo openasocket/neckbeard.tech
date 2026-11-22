@@ -1,0 +1,6 @@
+# Redirects for neckbeard.tech (Cloudflare Workers Static Assets)
+# Cross-host canonical redirect (www.neckbeard.tech -> neckbeard.tech) and 200 rewrites
+# (/.well-known/agents.json, /index.md) are handled directly in worker.js.
+
+/agents       /agents.md   301
+/agents.json  /index.json  301

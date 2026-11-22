@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "neckbeard",
+      "type": "skill-md",
+      "description": "The smallest change that is correct, safe at the trust boundary it crosses, fast and scalable at a named load, simple for the end user, and finishes the paths it creates. Levels: lite, full (default), paranoid, off.",
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard/SKILL.md",
+      "digest": "sha256:46d2b1db0cfa4b6e1d9ab60b031f491d95fde5ffe2a8825b144f733ab0a790af"
+    },
+    {
+      "name": "neckbeard-review",
+      "type": "skill-md",
+      "description": "Review a change for correctness, the trust boundary, speed and scale at the named load, whether internal complexity is hidden behind a simple user experience, and whether the change is finished. Supports --ci JSON gate mode.",
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-review/SKILL.md",
+      "digest": "sha256:c4f784337bfa20c3650abb318f123349b5254bcb49827f729da93ea03d2c3d5c"
+    },
+    {
+      "name": "neckbeard-audit",
+      "type": "skill-md",
+      "description": "Audit a repository or folder for the Safe, Fast at the named load, and Done gates starting at entry points. Modes: lite (targeted execution flows and major data/trust boundaries) or complete (every code, config, and doc file).",
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-audit/SKILL.md",
+      "digest": "sha256:1bd61ad5e5121dd04a0596fc1d71d781481743391d5139428022ac3f88122184"
+    },
+    {
+      "name": "neckbeard-debt",
+      "type": "skill-md",
+      "description": "Ledger of every accepted risk and deliberate shortcut marked with a risk:, shortcut:, or ponytail: comment, flagging illegal-deferral, expired-load-trigger, no-trigger, no-reason, and unrecorded-decision.",
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-debt/SKILL.md",
+      "digest": "sha256:091ecab8b2b827c1a2fefe5af39927e89d6dc4170caa27f31c29f919dd81855c"
+    },
+    {
+      "name": "neckbeard-gain",
+      "type": "skill-md",
+      "description": "100% local telemetry report and HTML dashboard for NeckBeard: tokens used, cost, turn performance, definition reuse %, refactor line deltas, PreToolUse guard blocks, and VIBES (.ai-audit/) PRISM/TRACE health.",
+      "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-gain/SKILL.md",
+      "digest": "sha256:05dde514ab1d667e04e43db7ffab22dddec74473819a828ec1efbc373bb75837"
+    }
+  ]
+}

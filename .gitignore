@@ -1,4 +1,4 @@
-.DS_Store
-.maestro/
+dist/
 .wrangler/
 node_modules/
+.DS_Store

@@ -1,0 +1,37 @@
+# NeckBeard — The Principal Engineer for Your AI Coding Agent (neckbeard.tech)
+
+> Smallest change that is correct, safe at the trust boundary it crosses, fast and scalable at a named load, simple for the end user, and finishes the paths it creates. Inspired by Ponytail (`Lean is this ladder, not a fourth gate`), hardened for the 3 a.m. incident bridge, and natively compatible with the VIBES AI assurance standard (`itsavibe.ai`).
+
+Every public page on `neckbeard.tech` is available as Markdown: request `/` with `Accept: text/markdown`, fetch `/index.md` (or `/md/index.md`), or load the normative Agent Skills Discovery v0.2.0 files below.
+
+## Normative Agent Specifications & Portable Rulesets (Start Here)
+
+- [NeckBeard Agent Manifest](https://neckbeard.tech/agents.md): Entry point for AI coding agents, skill table, `.neckbeard.json` schema, and Badge Honor Code
+- [Drop-In `AGENTS.md` Ruleset](https://neckbeard.tech/AGENTS.md): Standalone workspace ruleset (4 framing questions, 6-rung ladder, and Safe · Fast · Done gates)
+- [Per-Host Installation Guide (`INSTALL.md`)](https://neckbeard.tech/INSTALL.md): Setup for Claude Code, Codex, GitHub Copilot CLI, Grok CLI, Antigravity CLI, Gemini CLI, Pi / Oh My Pi, OpenCode / Kilo Code, Cursor, Windsurf, and Kiro
+- [Full Concatenated Corpus (`llms-full.txt`)](https://neckbeard.tech/llms-full.txt): Complete corpus of the Agent Manifest, `AGENTS.md`, all 5 `SKILL.md` specifications, `INSTALL.md`, and `auth.md`
+
+## Agent Skills Discovery v0.2.0 (`/.well-known/agent-skills/`)
+
+- [Agent Skills Discovery Index](https://neckbeard.tech/.well-known/agent-skills/index.json): JSON catalog with SHA-256 digests (`https://schemas.agentskills.io/discovery/0.2.0/schema.json`)
+- [`neckbeard` Skill](https://neckbeard.tech/.well-known/agent-skills/neckbeard/SKILL.md): Core coding skill — 4 framing questions, 6-rung minimalist ladder, and Safe · Fast · Done gates across `lite`, `full`, `paranoid`, and `off`
+- [`neckbeard-review` Skill](https://neckbeard.tech/.well-known/agent-skills/neckbeard-review/SKILL.md): Change & PR review with concrete exploit/load proof, repo-wide variant search, and `--ci` JSON verdict mode
+- [`neckbeard-audit` Skill](https://neckbeard.tech/.well-known/agent-skills/neckbeard-audit/SKILL.md): Repository security & scale audit in `lite` (execution flows & major trust boundaries) or `complete` (every tracked code, config, and doc file) mode
+- [`neckbeard-debt` Skill](https://neckbeard.tech/.well-known/agent-skills/neckbeard-debt/SKILL.md): Accepted-risk ledger scanning `risk:`, `shortcut:`, and `ponytail:` markers for `illegal-deferral` and `expired-load-trigger`
+- [`neckbeard-gain` Skill](https://neckbeard.tech/.well-known/agent-skills/neckbeard-gain/SKILL.md): 100% local telemetry report & HTML dashboard (`~/.config/neckbeard/band/board.html`) with `.ai-audit/` VIBES integration
+
+## Programmatic Discovery & API
+
+- [`auth.md`](https://neckbeard.tech/auth.md): Public unauthenticated endpoint guide & zero-telemetry guarantees
+- [API Catalog](https://neckbeard.tech/.well-known/api-catalog): RFC 9727 linkset (`application/linkset+json`)
+- [OpenAPI 3.1.0 Specification](https://neckbeard.tech/openapi.json): Public discovery & `/api/health` specification
+- [Machine Index (`index.json`)](https://neckbeard.tech/index.json): Structured JSON metadata for skills, gates, hooks, `.neckbeard.json` sink tags, and badges
+- [`agents.txt`](https://neckbeard.tech/agents.txt): Flat key-value agent discovery file
+- [Website Markdown Mirror (`index.md`)](https://neckbeard.tech/index.md): Markdown version of the interactive `neckbeard.tech` landing page
+
+## Official Badges & Seal of Survival
+
+- [Compact README Pill Badge (SVG)](https://neckbeard.tech/assets/badge.svg)
+- [Compact README Pill Badge (PNG)](https://neckbeard.tech/assets/badge.png)
+- [Built & Audited with NeckBeard Seal of Survival (SVG)](https://neckbeard.tech/assets/seal.svg)
+- [Built & Audited with NeckBeard Seal of Survival (PNG)](https://neckbeard.tech/assets/seal.png)

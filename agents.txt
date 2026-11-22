@@ -1,0 +1,16 @@
+# agents.txt — discovery file for AI coding agents
+# See https://neckbeard.tech/agents.md for the full manifest.
+
+Manifest: https://neckbeard.tech/agents.md
+Ruleset: https://neckbeard.tech/AGENTS.md
+Install: https://neckbeard.tech/INSTALL.md
+Index: https://neckbeard.tech/index.json
+Skills-Index: https://neckbeard.tech/.well-known/agent-skills/index.json
+API-Catalog: https://neckbeard.tech/.well-known/api-catalog
+
+# Five official NeckBeard skills (Agent Skills Discovery v0.2.0):
+Skill: https://neckbeard.tech/.well-known/agent-skills/neckbeard/SKILL.md         # core ladder & Safe/Fast/Done gates
+Skill: https://neckbeard.tech/.well-known/agent-skills/neckbeard-review/SKILL.md  # diff review + variant search + --ci gate
+Skill: https://neckbeard.tech/.well-known/agent-skills/neckbeard-audit/SKILL.md   # repo audit (lite | complete)
+Skill: https://neckbeard.tech/.well-known/agent-skills/neckbeard-debt/SKILL.md    # risk: & shortcut: ledger
+Skill: https://neckbeard.tech/.well-known/agent-skills/neckbeard-gain/SKILL.md    # local telemetry & VIBES board
