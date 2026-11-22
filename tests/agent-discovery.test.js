@@ -11,7 +11,8 @@ import worker, {
   markdownAssetFor,
   htmlPathFor,
   canonicalRedirect,
-  handleHealth
+  handleHealth,
+  applyDynamicVersion
 } from '../worker.js';
 
 let passed = 0;
@@ -254,6 +255,21 @@ await test('RANTS_BY_TOPIC in assets/site.js contains 16 topics with 20 unique q
   }
   const all = Object.values(byTopic).flat();
   assert.equal(new Set(all).size, 320);
+});
+
+await test('Dynamic release version rewriter updates every data-nb-version element and release link', () => {
+  const html = fs.readFileSync('dist/index.html', 'utf8');
+  const rewritten = applyDynamicVersion(html, {
+    version: '0.9.9',
+    tag: 'v0.9.9',
+    releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.9.9'
+  });
+  const tags = [...rewritten.matchAll(/<[^>]*\bdata-nb-version\b[^>]*>([^<]+)<\//g)].map((m) => m[1].trim());
+  assert(tags.length >= 10, `Expected at least 10 data-nb-version elements, found ${tags.length}`);
+  for (const t of tags) {
+    assert.equal(t, 'v0.9.9', `Expected data-nb-version element to be rewritten to v0.9.9, got ${t}`);
+  }
+  assert(rewritten.includes('https://github.com/openasocket/NeckBeard/releases/tag/v0.9.9'));
 });
 
 console.log(`\n${passed} passed, 0 failed\n`);

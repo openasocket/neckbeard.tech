@@ -23,7 +23,7 @@ if [[ "$LATEST_VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     let updated = raw
       .replace(/FALLBACK_VERSION = '\''[0-9]+\.[0-9]+\.[0-9]+'\''/g, `FALLBACK_VERSION = '\''${ver}'\''`)
       .replace(/releases\/tag\/v[0-9]+\.[0-9]+\.[0-9]+/g, `releases/tag/${tag}`)
-      .replace(/data-nb-version>v[0-9]+(?:\.[0-9]+){1,2}</g, `data-nb-version>${tag}<`)
+      .replace(/(<[^>]*\bdata-nb-version\b[^>]*>)\s*v?[0-9]+(?:\.[0-9]+){1,2}\s*(<\/)/g, `$1${tag}$2`)
       .replace(/NeckBeard v[0-9]+(?:\.[0-9]+){1,2}/g, `NeckBeard ${tag}`)
       .replace(/  v[0-9]+\.[0-9]+\.[0-9]+'\''/g, `  ${tag}'\''`)
       .replace(/version: '\''[0-9]+\.[0-9]+\.[0-9]+'\''/g, `version: '\''${ver}'\''`);

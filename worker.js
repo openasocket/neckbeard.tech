@@ -25,7 +25,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://static.cloudflareinsights.com",
+  "connect-src 'self' https://raw.githubusercontent.com https://api.github.com https://static.cloudflareinsights.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'"
@@ -39,7 +39,7 @@ const SKILLS = [
   'neckbeard-gain'
 ];
 
-const FALLBACK_VERSION = '0.3.1';
+const FALLBACK_VERSION = '0.3.2';
 const SEMVER_RE = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 let cachedRelease = {
   version: FALLBACK_VERSION,
@@ -48,7 +48,7 @@ let cachedRelease = {
   expiresAt: 0
 };
 
-function compareSemver(a, b) {
+export function compareSemver(a, b) {
   const pa = String(a).replace(/^v/i, '').split(/[.-]/).map((x) => (Number.isNaN(Number(x)) ? x : Number(x)));
   const pb = String(b).replace(/^v/i, '').split(/[.-]/).map((x) => (Number.isNaN(Number(x)) ? x : Number(x)));
   for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
@@ -64,54 +64,67 @@ async function resolveLatestRelease() {
   const now = Date.now();
   if (now < cachedRelease.expiresAt) return cachedRelease;
 
-  // In offline/unit-test environments without Cloudflare edge cache, return fast unless online fetch succeeds quickly
   const edgeCache = typeof caches !== 'undefined' && caches.default ? caches.default : null;
-  const cacheKey = new Request('https://neckbeard.tech/__internal/latest-release');
+  const cacheKey = new Request('https://neckbeard.tech/__internal/latest-release-v2');
   if (edgeCache) {
     try {
       const hit = await edgeCache.match(cacheKey);
       if (hit) {
         const data = await hit.json();
-        if (data && SEMVER_RE.test(data.version)) {
-          cachedRelease = { ...data, expiresAt: now + 300_000 };
+        if (data && SEMVER_RE.test(data.version) && compareSemver(data.version, FALLBACK_VERSION) >= 0) {
+          cachedRelease = { ...data, expiresAt: now + 60_000 };
           return cachedRelease;
         }
       }
     } catch {}
   } else {
-    // Unit test / local non-edge environment: avoid external network calls during unit tests
     cachedRelease.expiresAt = now + 60_000;
     return cachedRelease;
   }
 
   let bestVer = FALLBACK_VERSION;
+  let fetchedAny = false;
   const headers = {
-    'Accept': 'application/vnd.github+json',
     'User-Agent': 'neckbeard.tech-cloudflare-worker'
   };
 
   try {
-    const [relRes, tagRes] = await Promise.allSettled([
-      fetch('https://api.github.com/repos/openasocket/NeckBeard/releases/latest', { headers }),
-      fetch('https://api.github.com/repos/openasocket/NeckBeard/tags?per_page=5', { headers })
+    // Query 3 independent sources in parallel:
+    // 1) GitHub web /releases/latest 302 Location header (no 60 req/hr api.github.com IP rate limit)
+    // 2) raw.githubusercontent.com/openasocket/NeckBeard/main/package.json (no 60 req/hr API rate limit)
+    // 3) api.github.com/repos/openasocket/NeckBeard/releases/latest
+    const [webRel, rawPkg, apiRel] = await Promise.allSettled([
+      fetch('https://github.com/openasocket/NeckBeard/releases/latest', { headers, redirect: 'manual' }),
+      fetch('https://raw.githubusercontent.com/openasocket/NeckBeard/main/package.json', { headers }),
+      fetch('https://api.github.com/repos/openasocket/NeckBeard/releases/latest', {
+        headers: { ...headers, 'Accept': 'application/vnd.github+json' }
+      })
     ]);
 
-    if (relRes.status === 'fulfilled' && relRes.value.ok) {
-      const relJson = await relRes.value.json();
-      const candidate = String(relJson?.tag_name || '').replace(/^v/i, '');
-      if (SEMVER_RE.test(candidate) && compareSemver(candidate, bestVer) > 0) {
-        bestVer = candidate;
+    if (webRel.status === 'fulfilled') {
+      const loc = webRel.value.headers.get('location') || '';
+      const m = loc.match(/\/releases\/tag\/v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)/i);
+      if (m && SEMVER_RE.test(m[1])) {
+        fetchedAny = true;
+        if (compareSemver(m[1], bestVer) > 0) bestVer = m[1];
       }
     }
-    if (tagRes.status === 'fulfilled' && tagRes.value.ok) {
-      const tagsJson = await tagRes.value.json();
-      if (Array.isArray(tagsJson)) {
-        for (const t of tagsJson) {
-          const candidate = String(t?.name || '').replace(/^v/i, '');
-          if (SEMVER_RE.test(candidate) && compareSemver(candidate, bestVer) > 0) {
-            bestVer = candidate;
-          }
-        }
+
+    if (rawPkg.status === 'fulfilled' && rawPkg.value.ok) {
+      const pkgJson = await rawPkg.value.json();
+      const candidate = String(pkgJson?.version || '').replace(/^v/i, '');
+      if (SEMVER_RE.test(candidate)) {
+        fetchedAny = true;
+        if (compareSemver(candidate, bestVer) > 0) bestVer = candidate;
+      }
+    }
+
+    if (apiRel.status === 'fulfilled' && apiRel.value.ok) {
+      const relJson = await apiRel.value.json();
+      const candidate = String(relJson?.tag_name || '').replace(/^v/i, '');
+      if (SEMVER_RE.test(candidate)) {
+        fetchedAny = true;
+        if (compareSemver(candidate, bestVer) > 0) bestVer = candidate;
       }
     }
   } catch {}
@@ -120,16 +133,16 @@ async function resolveLatestRelease() {
     version: bestVer,
     tag: `v${bestVer}`,
     releaseUrl: `https://github.com/openasocket/NeckBeard/releases/tag/v${bestVer}`,
-    expiresAt: now + 300_000
+    expiresAt: now + 60_000
   };
   cachedRelease = resolved;
 
-  if (edgeCache) {
+  if (edgeCache && fetchedAny) {
     try {
       await edgeCache.put(
         cacheKey,
         new Response(JSON.stringify(resolved), {
-          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' }
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }
         })
       );
     } catch {}
@@ -137,14 +150,14 @@ async function resolveLatestRelease() {
   return resolved;
 }
 
-function applyDynamicVersion(text, rel) {
-  if (!rel || !SEMVER_RE.test(rel.version) || rel.version === FALLBACK_VERSION) return text;
+export function applyDynamicVersion(text, rel) {
+  if (!rel || !SEMVER_RE.test(rel.version)) return text;
   return text
-    .replaceAll(`releases/tag/v${FALLBACK_VERSION}`, `releases/tag/${rel.tag}`)
-    .replaceAll(`Release v${FALLBACK_VERSION}`, `Release ${rel.tag}`)
-    .replaceAll(`NeckBeard v${FALLBACK_VERSION}`, `NeckBeard ${rel.tag}`)
-    .replaceAll(`"version": "${FALLBACK_VERSION}"`, `"version": "${rel.version}"`)
-    .replaceAll(`data-nb-version>v${FALLBACK_VERSION}<`, `data-nb-version>${rel.tag}<`);
+    .replace(/(<[^>]*\bdata-nb-version\b[^>]*>)\s*v?\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?\s*(<\/)/g, `$1${rel.tag}$2`)
+    .replace(/releases\/tag\/v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?/g, `releases/tag/${rel.tag}`)
+    .replace(/Release v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?/g, `Release ${rel.tag}`)
+    .replace(/NeckBeard v\d+(?:\.\d+){1,2}/g, `NeckBeard ${rel.tag}`)
+    .replace(/"version":\s*"\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?"/g, `"version": "${rel.version}"`);
 }
 
 // Standalone normative .md files at root that must be served directly (not rewritten to /md/index.md)
@@ -411,10 +424,8 @@ export default {
       (contentType.includes('text/html') || fetchPathname === '/index.json' || fetchPathname === '/openapi.json')
     ) {
       const rel = await resolveLatestRelease();
-      if (rel.version !== FALLBACK_VERSION) {
-        const rewritten = applyDynamicVersion(await out.text(), rel);
-        out = new Response(rewritten, out);
-      }
+      const rewritten = applyDynamicVersion(await out.text(), rel);
+      out = new Response(rewritten, out);
     }
 
     const extraHeaders = discoveryHeadersFor(fetchPathname);

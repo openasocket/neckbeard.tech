@@ -1,6 +1,6 @@
 {
   "name": "neckbeard-tech",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "type": "module",
   "description": "neckbeard.tech — Official website, project badges, and Cloudflare Agent-Ready discovery endpoints for NeckBeard",

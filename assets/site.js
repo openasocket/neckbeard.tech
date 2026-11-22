@@ -1896,7 +1896,7 @@
       '    | \\ | | ___  ___| | _| __ )  ___  __ _ _ __ __| |',
       '    |  \\| |/ _ \\/ __| |/ /  _ \\ / _ \\/ _` | \'__/ _` |',
       '    | |\\  |  __/ (__|   <| |_) |  __/ (_| | | | (_| |',
-      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.3.1',
+      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.3.2',
       '%c\n🧔 Inspecting the DOM? Good. 0 tracking pixels, 0 npm runtime dependencies, 0 MB of hydration slush.\nTry running %cneckbeard.audit()%c, %cneckbeard.blame()%c, %cneckbeard.coffee()%c, %cneckbeard.konami()%c, %cneckbeard.doom()%c, or %cneckbeard.sudo()%c in this console.',
     ].join('\n');
     console.log(
@@ -1917,8 +1917,8 @@
       'color:#c5d1c9;font-family:monospace'
     );
     window.neckbeard = {
-      version: '0.3.1',
-      releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.3.1',
+      version: '0.3.2',
+      releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.3.2',
       totalRants: RANTS.length,
       topics: () => Object.keys(RANTS_BY_TOPIC),
       rant: (topic) => { const q = nextRandomRant(topic); popCameo(q); return q; },
@@ -1951,24 +1951,41 @@
       },
     };
 
-    // Dynamic latest release sync (queries edge-cached /api/version so the site always reflects the latest GitHub release tag)
+    // Dynamic latest release sync (queries both edge /api/version and rate-limit-free raw GitHub package.json)
     (async () => {
+      const cmp = (a, b) => {
+        const pa = String(a).replace(/^v/i, '').split('.').map(Number);
+        const pb = String(b).replace(/^v/i, '').split('.').map(Number);
+        for (let i = 0; i < 3; i++) {
+          if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) > (pb[i] || 0) ? 1 : -1;
+        }
+        return 0;
+      };
+      let best = window.neckbeard.version || '0.3.2';
       try {
-        const res = await fetch('/api/version', { headers: { Accept: 'application/json' } });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!data || !/^\d+\.\d+\.\d+/.test(data.version)) return;
-        const tag = data.tag || `v${data.version}`;
-        const url = data.releaseUrl || `https://github.com/openasocket/NeckBeard/releases/tag/${tag}`;
-        $$('[data-nb-version]').forEach((el) => {
-          el.textContent = tag;
-        });
-        $$('[data-nb-release-link]').forEach((el) => {
-          el.setAttribute('href', url);
-        });
-        window.neckbeard.version = data.version;
-        window.neckbeard.releaseUrl = url;
+        const [edgeRes, ghRes] = await Promise.allSettled([
+          fetch('/api/version', { headers: { Accept: 'application/json' } }),
+          fetch('https://raw.githubusercontent.com/openasocket/NeckBeard/main/package.json')
+        ]);
+        if (edgeRes.status === 'fulfilled' && edgeRes.value.ok) {
+          const d = await edgeRes.value.json();
+          if (d && /^\d+\.\d+\.\d+$/.test(d.version) && cmp(d.version, best) > 0) best = d.version;
+        }
+        if (ghRes.status === 'fulfilled' && ghRes.value.ok) {
+          const d = await ghRes.value.json();
+          if (d && /^\d+\.\d+\.\d+$/.test(d.version) && cmp(d.version, best) > 0) best = d.version;
+        }
       } catch {}
+      const tag = `v${best}`;
+      const url = `https://github.com/openasocket/NeckBeard/releases/tag/${tag}`;
+      $$('[data-nb-version]').forEach((el) => {
+        el.textContent = tag;
+      });
+      $$('[data-nb-release-link]').forEach((el) => {
+        el.setAttribute('href', url);
+      });
+      window.neckbeard.version = best;
+      window.neckbeard.releaseUrl = url;
     })();
   });
 })();
