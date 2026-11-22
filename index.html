@@ -1,559 +1,762 @@
 <!doctype html>
+<!--
+  🧔 Squinting at View Source? Good instinct.
+  Zero frameworks. Zero tracking pixels. Zero bloat.
+  Easter eggs buried on this page:
+    1. Click any glowing red ThinkPad TrackPoint dot (●).
+    2. Open your browser DevTools Console and run neckbeard.audit(), neckbeard.blame(), neckbeard.rant(), or neckbeard.coffee().
+    3. Type "sudo", "vibe", "kafka", ":wq", or the Konami code anywhere on the page.
+    4. Click the Seal of Survival stamp in Section 07 (if your conscience is clean).
+    5. Click the blinking terminal cursor (neckbeard█) in the footer for the 3 a.m. incident log.
+    6. curl -i https://neckbeard.tech/api/coffee (RFC 2324).
+-->
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NeckBeard — Minimal Code · Trust-Boundary Safe · Right-Sized Scale</title>
-  <meta name="description" content="Smallest change that is correct, safe at the boundary it crosses, fast and scalable at a named load, simple for the end user, and finished.">
-  <meta property="og:title" content="NeckBeard — The Principal Engineer in Your Coding Agent">
-  <meta property="og:description" content="Smallest change that is correct, safe at the boundary it crosses, fast and scalable at a named load, simple for the end user, and finished.">
-  <meta property="og:image" content="https://neckbeard.tech/assets/hero.png">
-  <meta property="og:url" content="https://neckbeard.tech">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/png" href="assets/logo-dark.png">
-  <link rel="stylesheet" href="assets/site.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>NeckBeard — Get Clean, Safe, Production-Ready Code from Your AI Agent (neckbeard.tech)</title>
+<meta name="description" content="You don't need to know every security hole or scaling trap—NeckBeard knows them for you. Automatically maps your project, audits your repo, remembers your traffic targets, and makes AI agents write half the code with the right protections built in.">
+<meta property="og:title" content="NeckBeard — Half the code. None of the blind spots. Built for real traffic.">
+<meta property="og:description" content="He automatically maps your app's risky spots, deletes 300 lines of AI bloat, checks that users can only access their own data, and audits your repo in plain English.">
+<meta property="og:image" content="https://neckbeard.tech/assets/social-card.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://neckbeard.tech/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/logo-dark.png" type="image/png">
+<link rel="alternate" type="text/markdown" href="https://neckbeard.tech/index.md" title="NeckBeard (Markdown for AI Agents)">
+<link rel="agent-skills" type="application/json" href="https://neckbeard.tech/.well-known/agent-skills/index.json">
+<link rel="api-catalog" type="application/linkset+json" href="https://neckbeard.tech/.well-known/api-catalog">
+<link rel="stylesheet" href="assets/site.css?v=8">
+<style>
+  /* Hyper-technical NeckBeard character mutter callouts & Easter egg styles */
+  .trackpoint { cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; }
+  .trackpoint:hover { transform: scale(1.35); box-shadow: 0 0 14px rgba(239, 68, 68, 1); }
+  .trackpoint.calibrating { animation: tp-pulse 0.6s ease-in-out 4; }
+  @keyframes tp-pulse { 50% { transform: scale(1.9); box-shadow: 0 0 22px #ef4444, 0 0 0 6px rgba(239, 68, 68, 0.25); } }
+  .footer-log { display: none; margin-top: 18px; padding: 14px 18px; border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.3); background: #050806; font: 400 12.5px/1.65 var(--mono); color: #74f0a0; max-width: 760px; white-space: pre-wrap; }
+  .footer-log.on { display: block; }
+  footer .mark { cursor: pointer; display: inline-block; }
+  .mutter { display: flex; align-items: flex-start; gap: 14px; margin-top: 22px; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(34, 197, 94, 0.26); background: rgba(7, 12, 9, 0.82); font: 400 13px/1.6 var(--mono); color: var(--soft); }
+  .mutter img { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(34, 197, 94, 0.45); background: #050806; object-fit: cover; }
+  .mutter div { min-width: 0; flex: 1; }
+  .mutter b { display: inline-block; color: var(--emerald); font-weight: 700; margin-right: 6px; }
+  .mutter i { font-style: normal; color: var(--faint); font-size: 11.5px; }
+  .mutter-btn { font: 600 12px var(--mono); color: var(--amber); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.32); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; align-self: center; }
+  .mutter-btn:hover { background: rgba(245, 158, 11, 0.2); }
+  @media (max-width: 680px) { .mutter { flex-direction: column; } .mutter-btn { align-self: flex-start; } }
+
+  /* 01 capabilities grid, lineage & code-strip chart */
+  .cap-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 32px; }
+  .cap-card { padding: 20px 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); display: flex; flex-direction: column; gap: 8px; }
+  .cap-card .cap-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .cap-card h3 { font: 700 15.5px var(--mono); color: var(--ink); margin: 0; }
+  .cap-card .cap-cmd { font: 600 12px var(--mono); color: var(--emerald); background: rgba(34, 197, 94, 0.12); padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .cap-card p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--soft); }
+  @media (max-width: 780px) { .cap-grid { grid-template-columns: 1fr; } }
+
+  .chart { margin-top: 42px; }
+  .m { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 18px 0; }
+  .m + .m { border-top: 1px solid var(--line); }
+  .ml b { display: block; font-family: var(--mono); font-weight: 800; font-size: 2.3rem; letter-spacing: -0.05em; line-height: 1; }
+  .ml span { display: block; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+  .bar { position: relative; height: 24px; margin: 0 70px 7px 0; }
+  .bar::before { content: ""; position: absolute; inset: -2px 0; background: rgba(238, 242, 239, 0.04); clip-path: inset(0 calc(100% - var(--w, 0%)) 0 0); }
+  .b2::before { background: linear-gradient(90deg, rgba(34, 197, 94, 0.16), rgba(56, 189, 248, 0.16), rgba(245, 158, 11, 0.16)); }
+  .bar:last-child { margin-bottom: 0; }
+  .bar s { position: absolute; inset: 0; overflow: hidden; font: 400 10px/12px var(--mono); word-break: break-all; text-decoration: none; user-select: none; clip-path: inset(0 calc(100% - var(--w, 0%)) 0 0); }
+  .b0 s { color: #3d4b42; }
+  .b1 s { color: #718779; }
+  .b2 s { background: var(--holo) 0 0 / var(--w, 0%) 100% no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
+  .bar em { position: absolute; top: 50%; transform: translateY(-50%); left: calc(var(--w, 0%) + 10px); font: 600 12px var(--mono); font-style: normal; color: var(--faint); white-space: nowrap; }
+  .b1 em { color: var(--muted); }
+  .b2 em { color: var(--ink); font-weight: 700; }
+  .legend { display: flex; gap: 26px; flex-wrap: wrap; margin-top: 22px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  .legend i { font-style: normal; font-weight: 700; margin-right: 8px; }
+
+  .diff-table { width: 100%; border-collapse: collapse; margin-top: 38px; font-size: 14.5px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .diff-table th, .diff-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .diff-table th { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: rgba(17, 25, 20, 0.85); }
+  .diff-table td:first-child { font-family: var(--mono); font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .diff-table td:nth-child(2) { color: var(--muted); }
+  .diff-table td:nth-child(3) { color: var(--soft); background: rgba(34, 197, 94, 0.04); }
+  @media (max-width: 760px) {
+    .m { grid-template-columns: 1fr; gap: 10px; }
+    .diff-table { display: block; overflow-x: auto; }
+  }
+
+  /* 02 before / after crumbling code canvas */
+  .count { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; margin-top: 36px; }
+  .count b { font-family: var(--mono); font-weight: 800; font-size: clamp(2.5rem, 5vw, 3.8rem); letter-spacing: -0.05em; line-height: 1; min-width: 3.1ch; }
+  .count span { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  #collapse-canvas { display: block; width: 100%; height: clamp(290px, 34vw, 390px); margin-top: 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(11, 16, 13, 0.6); }
+  .replay { font: 600 13px var(--mono); color: var(--emerald); background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 999px; padding: 6px 14px; cursor: pointer; margin-left: auto; }
+  .replay:hover { background: rgba(34, 197, 94, 0.2); }
+
+  /* Tabs / switches */
+  .switch { display: flex; gap: 10px 22px; flex-wrap: wrap; margin-top: 32px; font-size: 14.5px; }
+  .switch button { font: 600 13.5px var(--mono); color: var(--faint); background: none; border: 0; padding: 0 0 7px; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+  .switch button:hover { color: var(--soft); }
+  .switch button[aria-selected="true"] { color: var(--emerald); border-color: var(--emerald); }
+
+  /* 03 framing questions + ladder */
+  .fqs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .fq { padding: 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+  .fq span { display: block; font: 600 11px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--emerald); }
+  .fq b { display: block; font: 500 13px/1.45 var(--mono); color: var(--ink); margin-top: 6px; }
+  @media (max-width: 720px) { .fqs { grid-template-columns: 1fr; } }
+
+  .list { list-style: none; margin: 26px 0 0; padding: 0; }
+  .list li { display: grid; grid-template-columns: 52px 1fr auto; gap: 18px; align-items: baseline; padding: 15px 0; border-top: 1px solid var(--line); transition: opacity 0.3s; }
+  .list li:last-child { border-bottom: 1px solid var(--line); }
+  .list .i { font-family: var(--mono); font-size: 13.5px; color: var(--faint); }
+  .list .q { font-size: 1.06rem; }
+  .list .a { font-family: var(--mono); font-size: 12.5px; color: var(--muted); text-align: right; }
+  .list li.scan .i, .list li.scan .a { color: var(--ink); }
+  .list li.pass .q, .list li.pass .a { color: var(--faint); }
+  .list li.hit .i, .list li.hit .a { background: var(--holo); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 800; }
+  .list li.hit .a { font-size: 14px; filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.4)); }
+  .list li.skip { opacity: 0.28; }
+  @media (max-width: 680px) { .list li { grid-template-columns: 40px 1fr; } .list .a { grid-column: 2; text-align: left; } }
+
+  /* 04 live PreToolUse guard simulator */
+  .guard-box { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; margin-top: 24px; }
+  .g-card { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--card); }
+  .g-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; font: 600 12.5px var(--mono); color: var(--muted); margin-bottom: 12px; }
+  .g-pre { margin: 0; padding: 14px; border-radius: 12px; background: #050706; border: 1px solid var(--line); font: 400 12.5px/1.65 var(--mono); color: #f87171; white-space: pre-wrap; word-break: break-all; }
+  .g-deny { font: 700 14px var(--mono); color: var(--emerald); margin-bottom: 10px; }
+  .g-reason { font: 400 13px/1.6 var(--mono); color: var(--soft); margin: 0; }
+  .g-badge { display: inline-block; margin-top: 14px; padding: 5px 12px; border-radius: 999px; background: rgba(34, 197, 94, 0.14); color: var(--emerald); font: 600 12px var(--mono); }
+  @media (max-width: 860px) { .guard-box { grid-template-columns: 1fr; } }
+
+  /* 05 interactive review & audit explorer */
+  .rv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 26px; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: rgba(17, 25, 20, 0.45); min-height: 470px; }
+  .rv-code { position: relative; overflow: hidden; border-right: 1px solid var(--line); min-height: 440px; }
+  .rv-code .sc::after { content: ""; display: block; height: 180px; }
+  .rv-code .sc { position: absolute; inset: 0; overflow: auto; padding: 16px 0 0; font: 400 12px/1.8 var(--mono); color: #65786c; }
+  .rv-code .f { display: flex; gap: 12px; align-items: baseline; padding: 14px 18px 4px 54px; color: var(--muted); font-size: 11.5px; }
+  .rv-code .f i { font-style: normal; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .rv-code .f i.out { color: var(--amber); font-weight: 700; }
+  .rv-code .l { display: flex; width: max-content; min-width: 100%; white-space: pre; padding-right: 20px; }
+  .rv-code .l b { flex: none; width: 42px; padding-right: 12px; text-align: right; font-weight: 400; color: #3c4a41; }
+  .rv-code .l.on { background: linear-gradient(90deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0) 88%); }
+  .rv-code .l.on b { color: var(--emerald); }
+  .rv-code .l.on span { color: var(--ink); font-weight: 700; }
+  .rv-code .gap { padding-left: 42px; color: #3c4a41; }
+  .rv-out { display: flex; flex-direction: column; padding: 20px 24px; font-size: 13.5px; line-height: 1.55; }
+  .rv-out code { font: 500 0.92em var(--mono); color: #74f0a0; }
+  .rv-cmd { font: 700 14px var(--mono); color: var(--emerald); }
+  .rv-cmd .p { color: var(--faint); }
+  .rv-sum { color: var(--muted); margin: 10px 0 0; font-size: 13px; }
+  .rv-list { list-style: none; margin: 12px 0 0; padding: 0; }
+  .rv-list button { display: grid; grid-template-columns: 18px 88px minmax(0, 1fr); gap: 8px; width: 100%; padding: 6px 8px; border: 0; border-radius: 8px; background: none; color: var(--soft); font: inherit; text-align: left; cursor: pointer; }
+  .rv-list button:hover { background: rgba(238, 242, 239, 0.05); }
+  .rv-list li.on button { background: rgba(34, 197, 94, 0.12); color: var(--ink); }
+  .rv-list .n { font-family: var(--mono); color: var(--faint); }
+  .rv-list .s { font: 700 10px/2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+  .rv-list .s.must { color: var(--amber); }
+  .rv-list .s.should { color: var(--cyan); }
+  .rv-det { margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .rv-det dl { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 7px 12px; margin: 0; }
+  .rv-det dt { font: 700 10px/2 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .rv-det dd { margin: 0; color: var(--soft); }
+  .rv-end { margin: auto 0 0; padding-top: 14px; font: 600 12.5px/1.7 var(--mono); color: var(--emerald); }
+  .rv-end span { color: var(--muted); font-weight: 400; }
+  @media (max-width: 920px) { .rv { grid-template-columns: 1fr; } .rv-code { min-height: 240px; border-right: 0; border-bottom: 1px solid var(--line); } }
+
+  /* 06 interactive Claude Code band & trust-boundary graph */
+  .band-mock { margin-top: 28px; border: 1px solid var(--line-strong); border-radius: 16px; background: #090d0b; padding: 16px 20px; font-family: var(--mono); }
+  .bm-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; }
+  .bm-lvl { border: 1px solid var(--line); background: transparent; color: var(--muted); font: 600 12px var(--mono); padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+  .bm-lvl.on { background: var(--emerald); color: #050806; border-color: var(--emerald); }
+  .bm-pill { padding: 3px 9px; border-radius: 999px; font-size: 12px; background: rgba(34, 197, 94, 0.12); color: var(--emerald); }
+  .bm-pill.warn { background: rgba(245, 158, 11, 0.14); color: var(--amber); }
+  .bm-cols { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .bm-col span { display: block; font-size: 11px; color: var(--muted); }
+  .bm-col b { display: block; font-size: 15px; color: var(--ink); margin-top: 2px; }
+  .bm-col i { display: block; font-style: normal; font-size: 11px; color: var(--faint); margin-top: 2px; }
+  @media (max-width: 860px) { .bm-cols { grid-template-columns: repeat(2, 1fr); } }
+
+  .board-box { margin-top: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); padding: 20px; }
+  .bb-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+
+  /* 07 Official Badge & Seal of Survival */
+  .badge-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 30px; align-items: start; }
+  .badge-card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; padding: 24px; background: var(--card); }
+  .badge-preview { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 20px; border-radius: 14px; background: #050706; border: 1px solid var(--line); max-width: 100%; overflow: hidden; }
+  .badge-preview img { max-width: 100%; height: auto; display: block; }
+  .honor-box { margin-top: 20px; padding: 18px 20px; border-radius: 14px; border-left: 3px solid var(--amber); background: rgba(245, 158, 11, 0.06); font-size: 14.5px; color: var(--soft); }
+  .honor-box b { color: var(--amber); font-family: var(--mono); }
+  .snip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; margin-top: 16px; }
+  .snip { min-width: 0; }
+  .snip-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 600 12px var(--mono); color: var(--muted); margin-bottom: 6px; }
+  .snip pre { margin: 0; padding: 12px 14px; border-radius: 10px; background: #050706; border: 1px solid var(--line); font: 400 12px/1.55 var(--mono); color: var(--soft); overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+
+  /* 08 Install */
+  .cmd { display: flex; align-items: flex-start; gap: 20px; margin-top: 24px; padding: 18px 22px; border: 1px solid var(--line); border-radius: 14px; background: #070b09; }
+  .cmd[hidden] { display: none; }
+  .cmd pre { margin: 0; font-family: var(--mono); font-size: 0.98rem; line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
+  .cmd pre .p { color: var(--faint); user-select: none; }
+  .copy { font: 600 12.5px var(--mono); color: var(--emerald); background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; cursor: pointer; padding: 6px 12px; margin-left: auto; white-space: nowrap; }
+  .copy:hover { background: rgba(34, 197, 94, 0.2); }
+  .cmds { display: grid; grid-template-columns: max-content 1fr; gap: 12px 36px; margin: 46px 0 0; }
+  .cmds dt { font-family: var(--mono); font-size: 13.5px; color: var(--emerald); }
+  .cmds dd { margin: 0; color: var(--muted); font-size: 14.5px; }
+  @media (max-width: 680px) { .cmds { grid-template-columns: 1fr; gap: 2px; } .cmds dd { margin-bottom: 12px; } }
+</style>
 </head>
 <body>
 
-  <!-- Top ThinkPad Command Deck Navigation -->
-  <header class="nb-topbar">
-    <div class="nb-topbar-inner">
-      <a href="#top" class="nb-brand">
-        <img src="assets/logo-dark.png" alt="NeckBeard mascot">
-        <span>NeckBeard</span>
-        <span class="nb-trackpoint" title="TrackPoint Status: Armed"></span>
-        <span class="nb-brand-tag">v0.2.0 · 0 DEPS</span>
-      </a>
-      <nav class="nb-navlinks" aria-label="Main navigation">
-        <a href="#lineage">Why NeckBeard vs. Ponytail</a>
-        <a href="#shrinker">Diff Shrinker</a>
-        <a href="#simulator">Ladder &amp; Gates</a>
-        <a href="#guard">Live Guard</a>
-        <a href="#audits">Review &amp; Audit</a>
-        <a href="#badge">Badge &amp; Seal</a>
-        <a href="#install">Install</a>
-        <a href="https://github.com/openasocket/NeckBeard" target="_blank" rel="noopener">GitHub ↗</a>
-      </nav>
-      <button type="button" id="nb-bloat-trigger" class="nb-bloat-btn">
-        + Add Enterprise AbstractFactory
-      </button>
+<nav class="nav" aria-label="Main">
+  <button class="menu" type="button" popovertarget="navlinks" aria-label="Menu"><span></span><span></span><span></span></button>
+  <a class="brand" href="#top"><span class="trackpoint" aria-hidden="true"></span>neckbeard<span class="cur" aria-hidden="true"></span></a>
+  <div class="links" id="navlinks" popover>
+    <a class="l" href="#lineage">What It Does</a>
+    <a class="l" href="#collapse">Before / After</a>
+    <a class="l" href="#how">How It Thinks</a>
+    <a class="l" href="#guard">Safety Guard</a>
+    <a class="l" href="#review">Audit &amp; Review</a>
+    <a class="l" href="#band">Project Map &amp; Bar</a>
+    <a class="l badge-link" href="#badge">Seal of Survival</a>
+    <a class="l" href="#install">Install</a>
+    <a class="l gh" href="https://github.com/openasocket/NeckBeard">GitHub</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="intro">
+    <div class="kicker">NeckBeard <span class="holo">v0.2</span> · Built on <a href="https://ponytail.dev">Ponytail</a> · <a href="#badge">Claim the Seal of Survival →</a></div>
+    <h1 class="decode">Half the code.<br>None of the blind spots.<br><em>Built for everyday agent users.</em></h1>
+    <p>You don't need to know every security hole or database scaling trap—NeckBeard knows them for you. He automatically maps your project's risky spots, remembers how much traffic you expect, stops your AI agent from writing 300 lines of bloated code or exposing one user's data to another, and audits your whole repo in plain English.</p>
+    <div class="cta">
+      <a class="pill" href="#install"><span class="trackpoint" aria-hidden="true"></span>Install in two lines</a>
+      <a class="textlink" href="#lineage">See Map, Audit &amp; Guard capabilities ↓</a>
+      <a class="textlink" href="#badge">Get the <span class="holo">NeckBeard Badge</span> →</a>
+      <button type="button" class="mutter-btn" id="hero-mutter">🧔 Hear him rant</button>
     </div>
-  </header>
+  </div>
+  <button id="motion" type="button" aria-pressed="false"><i>❚❚</i><span>Pause motion</span></button>
+</header>
 
-  <main id="top" class="nb-shell">
+<!-- 01 CORE CAPABILITIES & LINEAGE -->
+<section id="lineage" class="sec"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">01</span>What It Does</div>
+  <div>
+    <h2 class="decode">You focus on what to build.<br><em>He handles what could go wrong.</em></h2>
+    <p class="lead">Most people using AI coding agents know what feature they want, not the twenty invisible ways an agent's first draft can leak customer data, crash under real traffic, or rack up a huge token bill. NeckBeard adds a seasoned principal engineer to your agent—combining <a href="https://ponytail.dev">Ponytail</a>'s code-shrinking checklist with automatic project mapping, plain-English repo audits, and a live safety guard.</p>
+    <div class="mutter">
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
+      <div><b>🧔 NeckBeard (3:14 a.m., ThinkPad X220):</b> "Your agent just scaffolded a 5-layer <code>AbstractRepositoryFactoryBean</code> with an unauthenticated BOLA/IDOR vector, an <code>O(N²)</code> N+1 select loop, and zero socket backpressure. I deleted 290 lines, bound <code>owner_id = $2</code>, and went back to recompiling my kernel." <i>(Translation: he keeps your code tiny and safe so you don't have to speak his language.)</i></div>
+    </div>
 
-    <!-- HERO COMMAND DECK -->
-    <section class="nb-hero">
-      <div class="nb-hero-grid">
-        <div>
-          <div class="nb-hero-pills">
-            <span class="nb-pill g">● Minimal &amp; Reused Code</span>
-            <span class="nb-pill c">🛡️ Trust-Boundary Safe</span>
-            <span class="nb-pill a">⚡ Targeted Scalability (Named Load)</span>
-            <span class="nb-pill">🔒 Complexity Hidden Inside</span>
-          </div>
-
-          <h1 class="nb-h1">
-            The principal engineer who has run the 3 a.m. postmortem for <span>every shortcut.</span>
-          </h1>
-
-          <p class="nb-hero-quote">
-            He tips his fedora once. He deletes your 300-line helper, adds <code>AND owner_id = $1</code>, scopes the query to your named load, and goes back to his ThinkPad.
-          </p>
-
-          <div class="nb-hero-pitch">
-            <strong>Smallest change that is correct, safe at the boundary it crosses, fast and scalable at a named load, simple for the end user, and finished.</strong>
-          </div>
-
-          <!-- Interactive Multi-Harness Quick Install -->
-          <div class="nb-quick-install">
-            <div class="nb-qi-bar">
-              <div class="nb-qi-tabs" role="tablist" aria-label="Select AI coding harness">
-                <button type="button" class="nb-qi-tab active" data-qi-harness="claude">Claude Code</button>
-                <button type="button" class="nb-qi-tab" data-qi-harness="codex">Codex</button>
-                <button type="button" class="nb-qi-tab" data-qi-harness="copilot">Copilot CLI</button>
-                <button type="button" class="nb-qi-tab" data-qi-harness="grok">Grok CLI</button>
-                <button type="button" class="nb-qi-tab" data-qi-harness="agy">Antigravity</button>
-                <button type="button" class="nb-qi-tab" data-qi-harness="gemini">Gemini CLI</button>
-                <button type="button" class="nb-qi-tab" data-qi-harness="pi">Pi / OMP</button>
-                <button type="button" class="nb-qi-tab" data-qi-harness="agents">AGENTS.md</button>
-              </div>
-              <button type="button" id="nb-qi-copy" class="nb-copy-btn">Copy</button>
-            </div>
-            <pre id="nb-qi-code" class="nb-qi-code">claude plugin marketplace add openasocket/NeckBeard
-claude plugin install neckbeard@neckbeard</pre>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-            <a href="#badge"><img src="assets/badge.svg" height="26" alt="NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale"></a>
-            <span class="nb-mono" style="font-size:12px;color:var(--nb-muted)">Works across Claude Code, Codex, Copilot, Grok, Antigravity, Gemini, Pi &amp; OpenCode.</span>
-          </div>
-        </div>
-
-        <!-- Right Column: Live Gate & Trust-Boundary Radar -->
-        <aside class="nb-radar-card" aria-label="Live NeckBeard Gate and Trust-Boundary Radar">
-          <div class="nb-radar-head">
-            <div class="nb-radar-title">
-              <span class="nb-trackpoint"></span>
-              <span>NECKBEARD COMMAND RADAR · [FULL]</span>
-            </div>
-            <span style="color:var(--nb-green)">.neckbeard.json: shared</span>
-          </div>
-
-          <div class="nb-radar-mascot-bar">
-            <img src="assets/logo-dark.png" alt="NeckBeard Sumi-Ink Mascot">
-            <div class="nb-radar-status">
-              <div><strong>Load Default:</strong> <span style="color:var(--nb-amber)">250 rps, 50k rows, p95 &lt; 100ms</span></div>
-              <div><strong>Trust Map [ext]:</strong> <span style="color:var(--nb-cyan)">ingress:api.js-&gt;http-in, webhooks.js-&gt;webhook-in</span></div>
-              <div><strong>Trust Map [int]:</strong> <span style="color:var(--nb-green)">auth:session.js-&gt;auth · data:db.js-&gt;sql</span></div>
-            </div>
-          </div>
-
-          <div class="nb-radar-canvas-wrap">
-            <canvas id="nb-radar-canvas"></canvas>
-          </div>
-
-          <div class="nb-radar-stats">
-            <div class="nb-rstat">
-              <div class="nb-rstat-k">Code Reuse &amp; Delta</div>
-              <div class="nb-rstat-v" style="color:var(--nb-green)">86% · -298 LOC</div>
-            </div>
-            <div class="nb-rstat">
-              <div class="nb-rstat-k">PreToolUse Guard</div>
-              <div class="nb-rstat-v" style="color:var(--nb-cyan)">🛡️ Armed (0 leaks)</div>
-            </div>
-            <div class="nb-rstat">
-              <div class="nb-rstat-k">VIBES (.ai-audit)</div>
-              <div class="nb-rstat-v" style="color:var(--nb-amber)">PRISM Verified</div>
-            </div>
-          </div>
-        </aside>
+    <div class="cap-grid" aria-label="Core NeckBeard Capabilities">
+      <div class="cap-card">
+        <div class="cap-top"><h3>1. Automatic Project Risk Map</h3><span class="cap-cmd">/neckbeard map</span></div>
+        <p>You don't have to explain your architecture every session. NeckBeard automatically scans and saves a compact map in <code>.neckbeard.json</code> showing where requests enter your app, where external APIs are called, and where logins, database queries, or shell commands happen—and warns you (<code>⚠ +1 boundary</code>) whenever your agent quietly adds a new one.</p>
       </div>
-    </section>
-
-    <!-- SECTION 1: LINEAGE & WHY NECKBEARD IS DIFFERENT FROM PONYTAIL -->
-    <section id="lineage" class="nb-section">
-      <div class="nb-eyebrow"><span>01</span> // Lineage &amp; Differentiation</div>
-      <h2 class="nb-h2">Inspired by Ponytail’s minimalism. Engineered for hostile boundaries and real production load.</h2>
-      <p class="nb-lead">
-        NeckBeard began with full respect for <a href="https://github.com/DietrichGebert/ponytail" target="_blank" rel="noopener">Ponytail</a> (<a href="https://ponytail.dev" target="_blank" rel="noopener">ponytail.dev</a>) by Dietrich Gebert. Ponytail nailed a vital insight: coding agents write far too much speculative code, and walking a six-rung minimalist question ladder cuts the bloat. NeckBeard keeps that six-rung ladder—and then adds what a principal engineer refuses to ship without.
-      </p>
-
-      <div class="nb-lineage-banner">
-        <div style="max-width:760px">
-          <h3 style="font-size:17px;margin-bottom:6px;color:var(--nb-green)">Why minimalism alone isn’t enough at 3 a.m.</h3>
-          <p style="color:var(--nb-muted);font-size:14.5px">
-            The shortest diff in the world will still page you if it trusts <code>req.query.id</code> without an object-ownership check, runs an N+1 query inside a loop at 250 requests per second, or pushes five configuration knobs onto the end user to look "lean." NeckBeard treats the six-rung ladder as how you choose the smallest implementation that passes <strong>three non-negotiable gates: Safe, Fast at a Named Load, and Done</strong>.
-          </p>
-        </div>
-        <div class="nb-mono" style="font-size:12px;background:#0a0e0c;padding:12px 16px;border-radius:9px;border:1px solid var(--nb-border-strong)">
-          <div style="color:var(--nb-dim)">// Core Axiom</div>
-          <div style="color:var(--nb-green);margin-top:4px">"Lean is this ladder,</div>
-          <div style="color:var(--nb-green)"> not a fourth gate."</div>
-        </div>
+      <div class="cap-card">
+        <div class="cap-top"><h3>2. Two-Speed Repo Audit &amp; Fix Plan</h3><span class="cap-cmd">/neckbeard-audit</span></div>
+        <p>Not sure if an AI-built repo is safe to launch? Run <code>/neckbeard-audit lite</code> (default) to check your main user flows and critical map spots fast, or <code>/neckbeard-audit complete</code> to inspect <strong>every single code, config, and documentation file</strong> in your repo—then ask it to generate a step-by-step fix plan.</p>
       </div>
-
-      <div class="nb-table-wrap">
-        <table class="nb-table">
-          <thead>
-            <tr>
-              <th>Engineering Dimension</th>
-              <th>Ponytail (The Minimalist Foundation)</th>
-              <th>NeckBeard (Principal-Engineer Hardened)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>1. Core Goal</strong></td>
-              <td>Write the least new code that solves the task.</td>
-              <td>Write the smallest change that is <strong>correct, safe at the trust boundary, fast at a named load, hides complexity inside, and finishes its callers</strong>.</td>
-            </tr>
-            <tr>
-              <td><strong>2. Targeted Scalability (Named Load)</strong></td>
-              <td>Performance checked primarily during code review or audit.</td>
-              <td><strong>Named Load as a Number before writing:</strong> persists <code>"load"</code> and per-sink <code>"boundaryLoad"</code> envelopes in <code>.neckbeard.json</code> (shared in Git by default). Designs for your exact number—never 100× Kafka bloat, never 1× N+1 fragility.</td>
-            </tr>
-            <tr>
-              <td><strong>3. Two-Tier Trust-Boundary Map</strong></td>
-              <td>General rule not to cut validation at trust boundaries.</td>
-              <td><strong>Auto-derived External <code>[ext]</code> &amp; Internal <code>[int]</code> Boundary Map:</strong> classifies <code>ingress</code>, <code>egress</code>, <code>supply</code>, <code>auth</code>, <code>data</code>, <code>exec</code>, and <code>ai</code> sinks, detects unreviewed boundary expansion drift (<code>⚠ +N boundary</code>), and strictly censors <code>.neckbeard.json</code>.</td>
-            </tr>
-            <tr>
-              <td><strong>4. Deep Modules (Hidden Complexity)</strong></td>
-              <td>Minimal implementation of the core job.</td>
-              <td><strong>Simple on the outside, complete on the inside:</strong> absorbs security, retry, and validation complexity inside the module boundary with safe defaults and zero extra user knobs.</td>
-            </tr>
-            <tr>
-              <td><strong>5. Live <code>PreToolUse</code> Guard</strong></td>
-              <td>Prompt-level guidance.</td>
-              <td><strong>Zero-dependency runtime hook (<code>hooks/guard.js</code>):</strong> blocks hardcoded secrets (AWS, GitHub, Stripe, OpenAI, Anthropic, PEM keys), blocks <code>.neckbeard.json</code> sensitive leaks, blocks <code>.ai-audit/</code> tampering, and at <code>paranoid</code> blocks <code>curl|sh</code> &amp; TLS bypasses before disk write.</td>
-            </tr>
-            <tr>
-              <td><strong>6. Audit Modes (<code>lite</code> vs. <code>complete</code>)</strong></td>
-              <td>Single repo audit flow.</td>
-              <td><strong>Two explicit <code>/neckbeard-audit</code> modes:</strong> <code>lite</code> (default: targeted execution flows &amp; major data/trust boundaries) and <code>complete</code> (every single code, config, CI, and doc file in the repo, with an upfront time/token/tool-call warning) + automatic <strong>variant search</strong>.</td>
-            </tr>
-            <tr>
-              <td><strong>7. Accepted-Risk Ledger &amp; Expiry</strong></td>
-              <td>Tracks <code>shortcut:</code> markers.</td>
-              <td>Tracks <code>risk:</code> (and <code>shortcut:</code>) markers, flags any deferred auth or data-loss check as <code>illegal-deferral</code>, and automatically flags deferrals whose numeric load trigger in <code>.neckbeard.json</code> has been crossed as <code>expired-load-trigger</code>.</td>
-            </tr>
-            <tr>
-              <td><strong>8. Local Command Center &amp; VIBES Forensics</strong></td>
-              <td>Local CSV ledger &amp; optional outbound webhook.</td>
-              <td><strong>100% local JSONL store &amp; Security Command Center (<code>~/.config/neckbeard/telemetry/dashboard.html</code>):</strong> zero outbound network calls, SVG Trust-Boundary Graph, definition reuse %, refactor line delta, guard blocks, and native <a href="https://www.itsavibe.ai" target="_blank" rel="noopener">VIBES (<code>.ai-audit/</code>)</a> PRISM/TRACE/EVOLVE integration.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="cap-card">
+        <div class="cap-top"><h3>3. Plain-English Change Review</h3><span class="cap-cmd">/neckbeard-review</span></div>
+        <p>Before you commit, NeckBeard reviews your agent's latest changes. Instead of cryptic security codes, it tells you in plain English what could break, automatically searches the rest of your repo for copy-paste duplicates of the same bug, and supports <code>--ci</code> pass/fail output.</p>
       </div>
-    </section>
+      <div class="cap-card">
+        <div class="cap-top"><h3>4. Right-Sized Traffic Memory</h3><span class="cap-cmd">/neckbeard load</span></div>
+        <p>Without guidance, agents either over-engineer complex enterprise systems for a 20-user tool or write slow database loops that freeze at 100 users. NeckBeard asks once for your expected traffic, saves it to <code>.neckbeard.json</code>, and right-sizes every feature to your real numbers.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-top"><h3>5. Live Mistake &amp; Secret Guard</h3><span class="cap-cmd">hooks/guard.js (&lt;2ms)</span></div>
+        <p>Watches file edits and terminal commands before they run. Stops your agent from accidentally saving API keys into your code, running risky <code>curl | sudo bash</code> scripts, leaking private URLs into shared git files, or erasing your audit history.</p>
+      </div>
+      <div class="cap-card">
+        <div class="cap-top"><h3>6. Shortcut Tracker &amp; Local Dashboard</h3><span class="cap-cmd">/neckbeard-debt &amp; -gain</span></div>
+        <p><code>/neckbeard-debt</code> tracks temporary shortcuts (<code>risk:</code> comments) and alerts you when your traffic outgrows them. <code>/neckbeard-gain</code> and the live status bar show your token savings, code reuse %, lines removed, and an interactive visual Project Map (100% local).</p>
+      </div>
+    </div>
 
-    <!-- SECTION 2: INTERACTIVE DIFF SHRINKER & GATE VERIFIER -->
-    <section id="shrinker" class="nb-section">
-      <div class="nb-eyebrow"><span>02</span> // Interactive Diff Shrinker</div>
-      <h2 class="nb-h2">Watch 312 lines of vulnerable AI ceremony collapse into 14 lines that pass all three gates.</h2>
-      <p class="nb-lead">
-        Without gates, coding agents either generate massive "Enterprise Manager/Factory" wrappers or take dangerous shortcuts that leave IDORs and N+1 loops behind. Here is the exact difference on a real multi-tenant batch invoice update.
-      </p>
+    <div class="chart" id="chart">
+      <div class="m" data-v="100,48,44"><div class="ml"><b>-56%</b><span>lines of code written</span></div><div>
+        <div class="bar b0" style="--w:100%"><s></s><em>100% (no skill)</em></div><div class="bar b1" style="--w:48%"><s></s><em>48% (Ponytail)</em></div><div class="bar b2" style="--w:44%"><s></s><em>44% (NeckBeard)</em></div></div></div>
+      <div class="m" data-v="38,89,100"><div class="ml"><b>100%</b><span>data-ownership &amp; traffic checks</span></div><div>
+        <div class="bar b0" style="--w:38%"><s></s><em>38%</em></div><div class="bar b1" style="--w:89%"><s></s><em>89%</em></div><div class="bar b2" style="--w:100%"><s></s><em>100%</em></div></div></div>
+      <div class="m" data-v="0,0,100"><div class="ml"><b>&lt;2ms</b><span>live secret &amp; mistake guard</span></div><div>
+        <div class="bar b0" style="--w:4%"><s></s><em>0%</em></div><div class="bar b1" style="--w:4%"><s></s><em>0%</em></div><div class="bar b2" style="--w:100%"><s></s><em>100% blocked pre-write</em></div></div></div>
+      <div class="legend"><span><i style="color:#3d4b42">{…}</i>no skill</span><span><i style="color:#718779">{…}</i>Ponytail (the minimalist inspiration)</span><span><i class="holo">{…}</i>NeckBeard v0.2 (Safe · Right-Sized · Done)</span></div>
+    </div>
 
-      <div class="nb-code-split">
-        <div class="nb-code-pane">
-          <div class="nb-code-pane-head">
-            <span style="color:var(--nb-red)">✗ Typical Unconstrained Agent Patch (312 LOC · 3 Gate Failures)</span>
-            <span class="nb-pill" style="color:var(--nb-red);border-color:rgba(225,29,72,0.4)">IDOR + N+1 + 4 Knobs</span>
-          </div>
-          <pre class="nb-code-pre">// ✗ GATE 1 (SAFE) FAIL: Logged-in check only; never authorizes org_id ownership!
-// ✗ GATE 2 (FAST @ 250 RPS) FAIL: N+1 query per invoice inside for-loop + check-then-write race
-// ✗ GATE 3 (DONE) FAIL: Pushes retryCount/validateSchema knobs onto caller &amp; leaks stack trace
-export class EnterpriseInvoiceBatchProcessorFactory {
-  constructor(options = { retryCount: 3, enableStrictCheck: false }) {
-    this.options = options;
-  }
-  async processBatch(req, res) {
-    try {
-      const results = [];
-      for (const item of req.body.items) { // Unbounded array!
-        const row = await db.query(`SELECT * FROM invoices WHERE id = '${item.id}'`);
-        if (row.rows[0].status !== 'archived') {
-          await db.query(`UPDATE invoices SET amount = ${item.amount} WHERE id = '${item.id}'`);
-          results.push(item.id);
-        }
+    <table class="diff-table" aria-label="Ponytail vs NeckBeard differentiation">
+      <thead>
+        <tr><th>Capability</th><th>Ponytail (ponytail.dev)</th><th>NeckBeard (neckbeard.tech)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>How It Writes Code</td><td>Write the least new code that solves the task.</td><td>Write the least code that is <strong>safe with user data</strong>, <strong>built for your real traffic</strong>, and <strong>simple to use with zero extra setup</strong>.</td></tr>
+        <tr><td>Code-Shrinking Checklist</td><td>6-step minimalist checklist.</td><td>Same 6-step checklist—every step must also pass the <strong>Safe</strong>, <strong>Right-Sized</strong>, and <strong>Done</strong> checks.</td></tr>
+        <tr><td>Project Risk Map (<code>/neckbeard map</code>)</td><td>Checked manually during review.</td><td><strong>Automatically mapped before writing</strong> into a compact <strong>Project Map</strong> in <code>.neckbeard.json</code>, with live alerts (<code>⚠ +1 boundary</code>) when an edit adds a new outside connection or risky action.</td></tr>
+        <tr><td>Traffic &amp; Scale (<code>/neckbeard load</code>)</td><td>General performance review.</td><td><strong>Saved Traffic Targets</strong> in <code>.neckbeard.json</code>. Asks once if unset, remembers your numbers across chats, and flags old shortcuts when your traffic grows.</td></tr>
+        <tr><td>Live Safety Guard</td><td>Prompt instructions only.</td><td>Active pre-action guard (<code>hooks/guard.js</code>) that blocks hardcoded API keys, dangerous terminal commands, private URLs in shared config, and audit-log tampering before they run.</td></tr>
+        <tr><td>Repo Audit Modes (<code>/neckbeard-audit</code>)</td><td>Single audit pass.</td><td><strong><code>/neckbeard-audit lite</code></strong> (fast check of your main user flows &amp; map spots) and <strong><code>/neckbeard-audit complete</code></strong> (reads every single code, config, and doc file, with an upfront time/token warning).</td></tr>
+        <tr><td>Live Status Bar &amp; Local Board</td><td>Claude Code bar + optional webhook.</td><td><strong>100% local</strong> Claude Code bar, Pi status bar, and visual HTML dashboard with an <strong>Interactive Project Map Graph</strong> and automatic <a href="https://www.itsavibe.ai">VIBES</a> (<code>.ai-audit/</code>) support.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></div></section>
+
+<!-- 02 BEFORE / AFTER CRUMBLING CODE -->
+<section id="collapse" class="sec sec-deferred"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">02</span>Before / After</div>
+  <div>
+    <h2 class="decode">Your agent writes 312 lines that leak user data.<br><em>NeckBeard writes 11 safe lines.</em></h2>
+    <p class="lead">Say you ask your agent: <em>"Add an endpoint to download an invoice."</em> A normal agent checks that a user is logged in, forgets to check that the invoice actually belongs to them (so anyone can view anyone else's bill), forgets to cap the database query, and dumps raw database errors to the screen. Watch the bloat crumble away:</p>
+    <div class="count"><b id="cl-n">312</b><span id="cl-l">lines without NeckBeard (leaks other users’ invoices + uncapped database loop)</span><button class="replay" id="cl-replay" type="button">↻ replay</button></div>
+    <canvas id="collapse-canvas" aria-hidden="true"></canvas>
+    <div class="mutter">
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
+      <div><b>🧔 NeckBeard:</b> "312 lines of <code>try/catch</code> enterprise theater that catches generic <code>Exception</code>, dumps the raw Postgres DSN to <code>stdout</code>, and still lets <code>user_id=42</code> enumerate the entire <code>invoices</code> table via sequential UUIDv1 prediction. Eleven lines. Parameterized. Bounded. Ship it."</div>
+    </div>
+    <p class="fine">Checking that the signed-in user actually owns the invoice (<code>AND owner_id = $2</code>), validating the ID upfront, and capping the query (<code>LIMIT 1</code>) are all baked into the 11 lines that survive.</p>
+  </div>
+</div></div></section>
+
+<!-- 03 HOW IT WORKS: 4 AUTOMATIC CHECKS + 6-STEP CHECKLIST -->
+<section id="how" class="sec sec-deferred"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">03</span>How It Thinks</div>
+  <div>
+    <h2 class="decode">Four automatic checks.<br><em>Six steps to smaller, safer code.</em></h2>
+    <p class="lead">Before editing a file, NeckBeard reads your saved project map and traffic target from <code>.neckbeard.json</code> (defaulting to the safe choice instead of interrupting you with technical questions) and walks through six steps:</p>
+    <div class="switch ex" role="tablist" aria-label="Example tasks you might ask your agent">
+      <button role="tab" aria-selected="true" data-ex="invoice">Customer invoice download</button>
+      <button role="tab" aria-selected="false" data-ex="webhook">Stripe payment webhook</button>
+      <button role="tab" aria-selected="false" data-ex="plugin">Make CSV export "pluggable"</button>
+      <button role="tab" aria-selected="false" data-ex="price">Format prices in the UI</button>
+    </div>
+    <div class="fqs" aria-live="polite">
+      <div class="fq"><span>1. What Files &amp; Tests Are Affected</span><b id="fq-blast">routes/invoices.ts, tests/invoices.test.ts</b></div>
+      <div class="fq"><span>2. Where Risk Crosses the Map (Auto-Detected)</span><b id="fq-boundary">Web request in (routes/invoices.ts) → Login check &amp; Database query</b></div>
+      <div class="fq"><span>3. Your Saved Traffic Target (.neckbeard.json)</span><b id="fq-load">250 requests/sec, 50k rows, under 100ms (.neckbeard.json)</b></div>
+      <div class="fq"><span>4. Complexity Handled Quietly Inside</span><b id="fq-hide">ID format check + owner check built right into the query; zero extra options needed</b></div>
+    </div>
+    <ol class="list ladder">
+      <li><span class="i">01</span><span class="q">Does it even need to exist?</span><span class="a">skip unrequested settings &amp; bloat</span></li>
+      <li><span class="i">02</span><span class="q">Is there already a helper for it in this project?</span><span class="a">reuse existing code instead of duplicating</span></li>
+      <li><span class="i">03</span><span class="q">Can the built-in language or browser API do it?</span><span class="a">use standard built-in features</span></li>
+      <li><span class="i">04</span><span class="q">Can an already-installed package handle it?</span><span class="a">use what you have; don't add new dependencies</span></li>
+      <li><span class="i">05</span><span class="q">Can it be one clear, readable line?</span><span class="a">one line anyone can understand at a glance</span></li>
+      <li><span class="i">06</span><span class="q">Otherwise: write the smallest code that is Safe, Right-Sized, and Done.</span><span class="a">+ 1 test that proves bad input is blocked</span></li>
+    </ol>
+    <div class="mutter">
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
+      <div><b>🧔 NeckBeard:</b> "You asked for a CSV export button and your agent tried to provision a 3-broker Kafka cluster, a Redis pub/sub fan-out, and a dynamic plugin registry for 12 req/min of egress. Rung 1: delete the message broker. Rung 3: stream RFC 4180 over chunked HTTP."</div>
+    </div>
+  </div>
+</div></div></section>
+
+<!-- 04 LIVE SAFETY GUARD SIMULATOR -->
+<section id="guard" class="sec sec-deferred"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">04</span>Safety Guard</div>
+  <div id="guard-sim">
+    <h2 class="decode">Stops leaked API keys &amp; risky commands<br><em>before your agent can run them.</em></h2>
+    <p class="lead">Agents move fast—and sometimes paste a live API key straight into a file or run a dangerous terminal command. <code>hooks/guard.js</code> checks every file edit and terminal command in under 2 milliseconds and blocks mistakes before they happen:</p>
+    <div class="switch g-tab" role="tablist" aria-label="Agent mistakes blocked by the safety guard">
+      <button role="tab" aria-selected="true" data-g="secret">Agent hardcodes an AWS key</button>
+      <button role="tab" aria-selected="false" data-g="vibes">Agent tries to erase audit history</button>
+      <button role="tab" aria-selected="false" data-g="censor">Agent saves private URL in shared config</button>
+      <button role="tab" aria-selected="false" data-g="shell">Agent pipes unverified script into sudo</button>
+    </div>
+    <div class="guard-box">
+      <div class="g-card">
+        <div class="g-head"><span id="g-tool">Write → src/config/aws.js</span><span id="g-level">Active level: full (default)</span></div>
+        <pre class="g-pre" id="g-payload">export const AWS_KEY = "AKIA" + "Q3EGRT7XZ2LMN4PB";
+export const REGION = "us-east-1";</pre>
+      </div>
+      <div class="g-card">
+        <div class="g-deny" id="g-verdict">🛡️ BLOCKED by hooks/guard.js (&lt;1ms)</div>
+        <p class="g-reason" id="g-reason">NeckBeard stopped this file save because it contains a hardcoded AWS access key (src/config/aws.js, line 1). Secrets never belong in source files or git history—the agent is instructed to read it from an environment variable instead.</p>
+        <span class="g-badge" id="g-counter">🛡️ 3 agent mistakes blocked and logged to your local board</span>
+      </div>
+    </div>
+    <div class="mutter">
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
+      <div><b>🧔 NeckBeard:</b> "It tried to commit an entropy-validated <code>AWS_SECRET_ACCESS_KEY</code>, traverse <code>.ai-audit/iocs.d/../manifest.json</code> to invalidate your Ed25519 DSSE envelope, and pipe <code>curl -k</code> into <code>sudo bash</code> with <code>--no-verify</code>. <code>hooks/guard.js</code> intercepted the syscall in 0.8ms before the dirty page even hit the ext4 journal."</div>
+    </div>
+  </div>
+</div></div></section>
+
+<!-- 05 INTERACTIVE AUDIT [LITE | COMPLETE] & REVIEW EXPLORER -->
+<section id="review" class="sec sec-deferred"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">05</span>Audit &amp; Review</div>
+  <div>
+    <h2 class="decode">Audit your flows or every single file.<br><em>Explained in plain English.</em></h2>
+    <p class="lead">Whether you're checking your agent's latest edit with <code>/neckbeard-review</code> or auditing an entire repository with <code>/neckbeard-audit</code>, NeckBeard never dumps vague security jargon on you. Every finding explains <strong>who can do what</strong>, <strong>what breaks at your traffic target</strong>, <strong>where else the same mistake exists in your repo</strong>, and <strong>how to fix it</strong>:</p>
+    <div class="switch rvt" role="tablist" aria-label="Review and Audit Modes">
+      <button role="tab" aria-selected="true" data-k="review">/neckbeard-review (check latest changes)</button>
+      <button role="tab" aria-selected="false" data-k="audit_lite">/neckbeard-audit lite (key flows &amp; map)</button>
+      <button role="tab" aria-selected="false" data-k="audit_complete">/neckbeard-audit complete (every file &amp; doc)</button>
+    </div>
+    <div class="rv" id="rv">
+      <div class="rv-code" aria-hidden="true"><div class="sc"></div></div>
+      <div class="rv-out">
+        <div class="rv-cmd"><span class="p">&rsaquo; </span><span class="c"></span></div>
+        <p class="rv-sum"></p>
+        <ol class="rv-list"></ol>
+        <div class="rv-det" aria-live="polite"></div>
+        <p class="rv-end"></p>
+      </div>
+    </div>
+    <script type="application/json" id="rv-data">{
+      "review": {
+        "cmd": "/neckbeard-review --ci",
+        "summary": "What this change does: Adds customer invoice downloads (`GET /api/invoices/:id`) and an outbound webhook notification.\nProject map check: Web request in (`src/routes/invoices.ts`) + Outbound request (`src/lib/notify.ts` — ⚠ +1 new outside connection not yet on your map) · Traffic target: 250 req/sec, 50k rows",
+        "files": [
+          {"name": "src/routes/invoices.ts", "tag": "in diff", "lines": [
+            [12, "router.get('/api/invoices/:id', requireAuth, async (req, res) => {"],
+            [13, "  const inv = await db.query('SELECT * FROM invoices WHERE id = $1', [req.params.id]);"],
+            [14, "  if (req.query.callback) await fetch(String(req.query.callback));"],
+            [15, "  return res.json(inv.rows[0]);"],
+            [16, "});"]
+          ]},
+          {"name": "src/routes/receipts.ts", "tag": "duplicate bug outside diff", "lines": [
+            [28, "router.get('/api/receipts/:id', requireAuth, async (req, res) => {"],
+            [29, "  const rec = await db.query('SELECT * FROM receipts WHERE id = $1', [req.params.id]);"],
+            [30, "  return res.json(rec.rows[0]);"]
+          ]}
+        ],
+        "findings": [
+          {
+            "sev": "must",
+            "title": "Any logged-in user can view anyone else's invoice (missing owner check)",
+            "hl": {"src/routes/invoices.ts": [12, 13], "src/routes/receipts.ts": [28, 29]},
+            "what": "`GET /api/invoices/:id` checks that the user is signed in (`requireAuth`), but looks up the invoice by ID alone (`WHERE id = $1`) without checking who owns it.",
+            "problem": "User A can paste User B's invoice ID into the URL and read their private billing address and PDF. Being logged in isn't enough—the server must verify ownership every time.",
+            "variants": "1 duplicate found outside your current edit: `src/routes/receipts.ts:29` also looks up receipts without checking `owner_id`.",
+            "fix": "Check ownership in both database queries: `WHERE id = $1 AND owner_id = $2` passing `[req.params.id, req.user.id]`.",
+            "skip": "Any signed-in customer can download every other customer's invoices and receipts."
+          },
+          {
+            "sev": "must",
+            "title": "Unchecked ?callback= URL lets anyone make your server call internal systems (+1 new map boundary)",
+            "hl": {"src/routes/invoices.ts": [14]},
+            "what": "Line 14 passes `req.query.callback` straight into `fetch()`, adding a new outbound network connection (`http-out`) that wasn't on your `.neckbeard.json` project map.",
+            "problem": "Anyone can pass a private internal URL in `?callback=http://169.254.169.254/...` and trick your server into fetching internal cloud credentials or private services.",
+            "variants": "None (checked all other `fetch(` calls in `src/`).",
+            "fix": "Delete the `?callback=` URL parameter; only send webhooks to trusted URLs saved in the customer's account settings.",
+            "skip": "Attackers can use your server to probe private internal networks."
+          },
+          {
+            "sev": "should",
+            "title": "Missing test proving User A cannot download User B's invoice",
+            "hl": {"src/routes/invoices.ts": [12, 15]},
+            "what": "No automated test checks that User A requesting User B's invoice gets a `404` response.",
+            "problem": "If a future agent edit accidentally removes `AND owner_id = $2`, all your tests would still pass.",
+            "variants": "Also missing in `tests/receipts.test.ts`.",
+            "fix": "Add one test where User A requests User B's invoice and assert that the server returns `404`.",
+            "skip": "A future edit could quietly re-open cross-account data access without any test failing."
+          }
+        ],
+        "verdict": "Verdict: fix 2 Must-fix issues first.",
+        "footer": "{\"verdict\":\"fail\",\"mustFix\":2}"
+      },
+      "audit_lite": {
+        "cmd": "/neckbeard-audit lite",
+        "summary": "Audit mode: lite (14 key user-flow & map boundary files audited via .neckbeard.json) · Traffic target: 250 req/sec, 50k rows [webhook-in=2000 req/sec burst]",
+        "files": [
+          {"name": ".neckbeard.json", "tag": "project map & traffic", "lines": [
+            [1, "{"],
+            [2, "  \"shared\": true, \"load\": \"250 rps, 50k rows, p95 < 100ms\","],
+            [3, "  \"boundaryLoad\": { \"webhook-in\": \"2000 rps burst\" },"],
+            [4, "  \"boundaries\": { \"external\": { \"ingress\": [\"src/webhooks/stripe.ts->webhook-in\"] } }"],
+            [5, "}"]
+          ]},
+          {"name": "src/webhooks/stripe.ts", "tag": "user flow", "lines": [
+            [18, "// risk: in-memory dedup Set, safe below 100 rps, revisit at 100 rps"],
+            [19, "const seenIds = new Set();"],
+            [20, "export async function handleWebhook(req, res) {"],
+            [21, "  if (seenIds.has(req.body.id)) return res.sendStatus(200);"],
+            [22, "  seenIds.add(req.body.id);"]
+          ]}
+        ],
+        "findings": [
+          {
+            "sev": "must",
+            "title": "Outgrown shortcut: in-memory webhook tracker crashes under your 2,000 req/sec burst target",
+            "hl": {".neckbeard.json": [2, 3], "src/webhooks/stripe.ts": [18, 19, 21, 22]},
+            "what": "`seenIds` is an in-memory `Set` that grows forever, marked with a temporary shortcut comment (`risk: ... revisit at 100 rps`).",
+            "problem": "Your `.neckbeard.json` traffic target is now `250 rps` globally and `2000 rps burst` for webhooks (`expired-load-trigger`). In-memory sets never clear old items (causing an out-of-memory crash) and reset on server restart (allowing duplicate payment events).",
+            "variants": "1 duplicate found in `src/webhooks/github.ts:14`.",
+            "fix": "Record `event_id` in your database table `webhook_events (id PRIMARY KEY, created_at)` with `ON CONFLICT DO NOTHING` and delete `seenIds`.",
+            "skip": "Duplicate customer charges across server instances and memory crashes during webhook bursts."
+          }
+        ],
+        "verdict": "Verdict: fix 1 Must-fix issue first. Skipped in lite mode: 28 static UI styling files (run /neckbeard-audit complete to inspect every single file).",
+        "footer": "Want these fixed automatically? Ask and NeckBeard will draft a SPEC.md or Maestro Auto Run playbook."
+      },
+      "audit_complete": {
+        "cmd": "/neckbeard-audit complete",
+        "summary": "⚠ HEADS UP: Running complete mode across all 42 code, config, workflow, and documentation files in your repo. Inspecting every file takes longer and uses more tokens.\nAudit mode: complete (42/42 files inspected · Skipped: none)",
+        "files": [
+          {"name": "README.md", "tag": "documentation promise", "lines": [
+            [44, "## Privacy & Security Guarantees"],
+            [45, "All exported CSV reports strip personal customer data (emails and SSN digits) before download."]
+          ]},
+          {"name": "src/exporter/report.ts", "tag": "every file inspected", "lines": [
+            [10, "export function buildReportCsv(rows) {"],
+            [11, "  return rows.map(r => `${r.id},${r.email},${r.ssn_last4}`).join('\\n');"],
+            [12, "}"]
+          ]}
+        ],
+        "findings": [
+          {
+            "sev": "must",
+            "title": "Broken README promise: docs say personal data is stripped, but CSV export includes email and SSN digits",
+            "hl": {"README.md": [44, 45], "src/exporter/report.ts": [10, 11]},
+            "what": "`README.md:45` promises that exported CSV reports strip personal customer data, but `src/exporter/report.ts:11` outputs `r.email` and `r.ssn_last4`.",
+            "problem": "Users relying on your README's privacy guarantee will accidentally export customer emails and SSN digits into shared spreadsheets.",
+            "variants": "None across all 42 inspected files.",
+            "fix": "Remove `r.email` and `r.ssn_last4` from `buildReportCsv` so the code matches your documented promise.",
+            "skip": "Accidental exposure of personal customer data in exported CSV files."
+          }
+        ],
+        "verdict": "Verdict: fix 1 Must-fix issue first. Skipped: none (all 42 code, config, and documentation files inspected).",
+        "footer": "Want these fixed automatically? Ask and NeckBeard will draft a SPEC.md or Maestro Auto Run playbook."
       }
-      return res.json({ updated: results });
-    } catch (err) {
-      return res.status(500).send(err.stack); // Leaks internal stack &amp; file paths
-    }
+    }</script>
+  </div>
+</div></div></section>
+
+<!-- 06 LIVE CLAUDE CODE BAND, PROJECT MAP & LOCAL BOARD -->
+<section id="band" class="sec sec-deferred"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">06</span>Map &amp; Live Bar</div>
+  <div id="band-demo">
+    <h2 class="decode">See your project map &amp; savings live.<br><em>100% local on your machine.</em></h2>
+    <p class="lead">With <code>/neckbeard map</code>, NeckBeard keeps an up-to-date map of where your app talks to the outside world and where sensitive data lives. In Claude Code (and Pi / Oh My Pi), it also displays a live status bar above your prompt and generates a local visual dashboard (<code>~/.config/neckbeard/telemetry/dashboard.html</code>)—with automatic <a href="https://www.itsavibe.ai">VIBES</a> (<code>.ai-audit/</code>) support and zero cloud tracking.</p>
+
+    <!-- Interactive Claude Code Band Replica -->
+    <div class="band-mock" aria-label="Interactive Claude Code AbovePrompt Band Preview">
+      <div class="bm-top">
+        <span style="color:var(--emerald)">●</span>
+        <b id="bd-active-level" style="margin-right:6px">full</b>
+        <button type="button" class="bm-lvl" data-band-level="off">off</button>
+        <button type="button" class="bm-lvl" data-band-level="lite">lite</button>
+        <button type="button" class="bm-lvl on" data-band-level="full">full</button>
+        <button type="button" class="bm-lvl" data-band-level="paranoid">paranoid</button>
+        <span>$0.38</span>
+        <span class="muted">last $0.06</span>
+        <span class="muted">4m 12s</span>
+        <span>86% reuse</span>
+        <span class="muted">+24/-182 LOC</span>
+        <span class="bm-pill">🛡️ 3 blocked</span>
+        <span class="bm-pill">🔒 4/4 fixed</span>
+        <span class="bm-pill">VIBES 0.18</span>
+        <span class="bm-pill warn">⚠ +1 new map spot</span>
+        <span style="color:var(--emerald)">✓ 21 tests</span>
+        <button type="button" class="bm-lvl" id="bd-toggle-details" style="margin-left:auto">Compact</button>
+      </div>
+      <div class="bm-cols" id="bd-details-row">
+        <div class="bm-col"><span>session cost</span><b>$0.38</b><i>last $0.06 · avg $0.05</i></div>
+        <div class="bm-col"><span>tokens used</span><b>48.2k</b><i>7 turns · cache 89%</i></div>
+        <div class="bm-col"><span>code reuse &amp; lines</span><b>86% reuse</b><i>6 reused · 1 new · -158 net lines</i></div>
+        <div class="bm-col"><span>safety &amp; guard</span><b style="color:var(--emerald)">3 blocked</b><i>4/4 fixed · risk 0.18</i></div>
+        <div class="bm-col"><span>traffic target</span><b>250 rps, 50k rows</b><i>.neckbeard.json (shared)</i></div>
+        <div class="bm-col"><span>map changes</span><b style="color:var(--amber)">+1 new</b><i>worker.js-&gt;proc</i></div>
+      </div>
+    </div>
+
+    <!-- Interactive Board & Project Map Graph Preview -->
+    <div class="board-box">
+      <div class="bb-head">
+        <div>
+          <b style="font-family:var(--mono);font-size:14px">Interactive Project Risk Map &amp; Scrubbed Config (<code>.neckbeard.json</code>)</b>
+          <div id="bd-share-status" style="font:400 12px var(--mono);color:var(--emerald);margin-top:3px">Shared in .neckbeard.json (committed to Git so every agent &amp; teammate gets the map · private URLs/secrets auto-scrubbed)</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="bm-lvl on" data-board-tab="graph">Visual Project Map</button>
+          <button type="button" class="bm-lvl" data-board-tab="sessions">What's Saved in .neckbeard.json</button>
+          <button type="button" class="bm-lvl" id="bd-toggle-share" style="border-color:var(--amber);color:var(--amber)">/neckbeard share off</button>
+        </div>
+      </div>
+
+      <div id="bd-pane-graph">
+        <svg viewBox="0 0 920 270" style="width:100%;height:auto;display:block" role="img" aria-label="Interactive Project Risk Map showing Outside Connections and Internal Core Operations">
+          <rect x="395" y="10" width="110" height="250" rx="12" fill="#111a14" stroke="#22c55e" stroke-dasharray="5,4"/>
+          <text x="450" y="122" fill="#22c55e" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700" text-anchor="middle">SAFETY &amp;</text>
+          <text x="450" y="140" fill="#22c55e" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700" text-anchor="middle">TRAFFIC CHECK</text>
+          <text x="450" y="162" fill="#8a9990" font-family="ui-monospace,Menlo,monospace" font-size="9.5" text-anchor="middle">250 req/s · Fail Safe</text>
+
+          <rect x="14" y="16" width="310" height="70" rx="10" fill="#0d1310" stroke="#f59e0b"/>
+          <text x="28" y="35" fill="#f59e0b" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700">Incoming Requests &amp; Webhooks (3)</text>
+          <text x="28" y="53" fill="#eef2ef" font-family="ui-monospace,Menlo,monospace" font-size="10">routes/invoices.ts-&gt;http-in</text>
+          <text x="28" y="70" fill="#c5d1c9" font-family="ui-monospace,Menlo,monospace" font-size="10">webhooks/stripe.ts-&gt;webhook-in</text>
+          <path d="M324,51 C360,51 365,135 395,135" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+
+          <rect x="14" y="100" width="310" height="70" rx="10" fill="#0d1310" stroke="#38bdf8"/>
+          <text x="28" y="122" fill="#38bdf8" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700">Outbound API Calls (1)</text>
+          <text x="28" y="142" fill="#eef2ef" font-family="ui-monospace,Menlo,monospace" font-size="10">lib/webhook.ts-&gt;http-out (trusted hosts)</text>
+          <path d="M324,135 L395,135" fill="none" stroke="#38bdf8" stroke-width="1.6"/>
+
+          <rect x="14" y="184" width="310" height="70" rx="10" fill="#0d1310" stroke="#a855f7"/>
+          <text x="28" y="206" fill="#a855f7" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700">Build &amp; CI Workflows (1)</text>
+          <text x="28" y="226" fill="#eef2ef" font-family="ui-monospace,Menlo,monospace" font-size="10">.github/workflows/test.yml-&gt;ci</text>
+          <path d="M324,219 C360,219 365,135 395,135" fill="none" stroke="#a855f7" stroke-width="1.6"/>
+
+          <rect x="564" y="16" width="342" height="54" rx="10" fill="#0d1310" stroke="#22c55e"/>
+          <text x="578" y="36" fill="#22c55e" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700">Logins &amp; Who-Owns-What Checks</text>
+          <text x="578" y="54" fill="#eef2ef" font-family="ui-monospace,Menlo,monospace" font-size="10">middleware/auth.ts-&gt;auth (owner_id=$1)</text>
+          <path d="M505,135 C538,135 542,43 564,43" fill="none" stroke="#22c55e" stroke-width="1.6"/>
+
+          <rect x="564" y="80" width="342" height="54" rx="10" fill="#0d1310" stroke="#2dd4bf"/>
+          <text x="578" y="100" fill="#2dd4bf" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700">Database &amp; File Storage</text>
+          <text x="578" y="118" fill="#eef2ef" font-family="ui-monospace,Menlo,monospace" font-size="10">db/invoices.ts-&gt;sql · hooks/surface.js-&gt;fs</text>
+          <path d="M505,135 C538,135 542,107 564,107" fill="none" stroke="#2dd4bf" stroke-width="1.6"/>
+
+          <rect x="564" y="144" width="342" height="54" rx="10" fill="#0d1310" stroke="#fb7185"/>
+          <text x="578" y="164" fill="#fb7185" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700">Shell Commands &amp; Encryption</text>
+          <text x="578" y="182" fill="#eef2ef" font-family="ui-monospace,Menlo,monospace" font-size="10">hooks/guard.js-&gt;proc · worker.js (+1 new)</text>
+          <path d="M505,135 C538,135 542,171 564,171" fill="none" stroke="#fb7185" stroke-width="1.6"/>
+
+          <rect x="564" y="208" width="342" height="54" rx="10" fill="#0d1310" stroke="#facc15"/>
+          <text x="578" y="228" fill="#facc15" font-family="ui-monospace,Menlo,monospace" font-size="11.5" font-weight="700">AI Prompts &amp; Audit Trail</text>
+          <text x="578" y="246" fill="#eef2ef" font-family="ui-monospace,Menlo,monospace" font-size="10">hooks/session-start.js-&gt;ai · .ai-audit/</text>
+          <path d="M505,135 C538,135 542,235 564,235" fill="none" stroke="#facc15" stroke-width="1.6"/>
+        </svg>
+      </div>
+
+      <div id="bd-pane-sessions" hidden>
+        <pre style="margin:0;padding:14px;border-radius:12px;background:#050706;border:1px solid var(--line);font:400 12.5px/1.6 var(--mono);color:var(--soft);overflow-x:auto">{
+  "shared": <span id="bd-json-shared" style="color:var(--emerald)">true</span>,
+  "load": "250 rps, 50k rows, p95 &lt; 100ms",
+  "boundaryLoad": { "webhook-in": "2000 rps burst", "cli-in": "1 local operator" },
+  "boundaries": {
+    "external": { "ingress": ["routes/invoices.ts-&gt;http-in", "webhooks/stripe.ts-&gt;webhook-in"], "egress": ["lib/webhook.ts-&gt;http-out"], "supply": [".github/workflows/test.yml-&gt;ci"] },
+    "internal": { "auth": ["middleware/auth.ts-&gt;auth"], "data": ["db/invoices.ts-&gt;sql"], "exec": ["hooks/guard.js-&gt;proc"], "ai": ["hooks/session-start.js-&gt;ai"] }
   }
 }</pre>
-        </div>
-
-        <div class="nb-code-pane">
-          <div class="nb-code-pane-head">
-            <span style="color:var(--nb-green)">✓ NeckBeard Hardened Patch (14 LOC · Passes Safe, 250 RPS &amp; Done)</span>
-            <span class="nb-pill g">-95% Code · 0 Knobs</span>
-          </div>
-          <pre class="nb-code-pre">// ✓ SAFE: Bounded input (<= 500), parameterized query, server-side org_id authorization
-// ✓ FAST (250 RPS): Single atomic UPDATE ... WHERE id = ANY($1) (idempotent, 0 races, 1 round-trip)
-// ✓ DONE: Complexity hidden inside; clean actionable error on failure; +1 hostile-input test
-app.post('/api/invoices/archive', requireSession, async (req, res) => {
-  const ids = Array.isArray(req.body?.ids) ? req.body.ids.slice(0, 500) : [];
-  if (!ids.length) return res.status(400).json({ error: 'Provide 1 to 500 invoice IDs.' });
-
-  const { rowCount } = await db.query(
-    `UPDATE invoices SET status = 'archived', updated_at = NOW()
-      WHERE id = ANY($1::uuid[]) AND org_id = $2 AND status <> 'archived'`,
-    [ids, req.user.orgId]
-  );
-  return res.json({ archivedCount: rowCount });
-});</pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 3: INTERACTIVE 4 FRAMING QUESTIONS + 6-RUNG LADDER SIMULATOR -->
-    <section id="simulator" class="nb-section">
-      <div class="nb-eyebrow"><span>03</span> // Interactive Pre-Write Framing &amp; Ladder Simulator</div>
-      <h2 class="nb-h2">Four framing questions before touching a file. Six rungs to the smallest safe code.</h2>
-      <p class="nb-lead">
-        Click any production task below to inspect how NeckBeard derives the blast radius, the external/internal trust boundary, the numeric load target from <code>.neckbeard.json</code>, and the lowest rung on the minimalist ladder that passes the gates.
-      </p>
-
-      <div class="nb-workbench">
-        <div class="nb-wb-head">
-          <div class="nb-wb-tabs" role="tablist">
-            <button type="button" class="nb-wb-tab active" data-ladder-scenario="webhook">1. Stripe Webhook Receiver (2,000 RPS Burst)</button>
-            <button type="button" class="nb-wb-tab" data-ladder-scenario="export">2. Multi-Tenant 50k-Row CSV Export</button>
-            <button type="button" class="nb-wb-tab" data-ladder-scenario="fs">3. Symlink-Safe Avatar File Loader</button>
-          </div>
-          <span class="nb-pill g" id="nb-sim-rung">Rung 2 &amp; 5</span>
-        </div>
-
-        <div class="nb-wb-body">
-          <div style="margin-bottom:16px;padding:12px 14px;background:#090d0b;border:1px solid var(--nb-border);border-radius:8px;font-family:var(--nb-mono);font-size:13px">
-            <span style="color:var(--nb-dim)">USER PROMPT &gt;</span> <strong id="nb-sim-ask" style="color:var(--nb-text)"></strong>
-          </div>
-
-          <div class="nb-grid-2" style="margin-bottom:18px">
-            <div class="nb-card" style="padding:14px 16px">
-              <div class="nb-mono" style="font-size:11px;color:var(--nb-green);margin-bottom:4px">Q1 // BLAST RADIUS &amp; CALLERS</div>
-              <p id="nb-sim-q1" style="font-size:13.5px;color:var(--nb-text)"></p>
-            </div>
-            <div class="nb-card" style="padding:14px 16px">
-              <div class="nb-mono" style="font-size:11px;color:var(--nb-cyan);margin-bottom:4px">Q2 // DERIVED TRUST BOUNDARY ([EXT] -&gt; [INT])</div>
-              <p id="nb-sim-q2" style="font-size:13.5px;color:var(--nb-text)"></p>
-            </div>
-            <div class="nb-card" style="padding:14px 16px">
-              <div class="nb-mono" style="font-size:11px;color:var(--nb-amber);margin-bottom:4px">Q3 // NAMED LOAD AS A NUMBER (.NECKBEARD.JSON)</div>
-              <p id="nb-sim-q3" style="font-size:13.5px;color:var(--nb-text)"></p>
-            </div>
-            <div class="nb-card" style="padding:14px 16px">
-              <div class="nb-mono" style="font-size:11px;color:var(--nb-green);margin-bottom:4px">Q4 // COMPLEXITY HIDDEN INSIDE THE BOUNDARY</div>
-              <p id="nb-sim-q4" style="font-size:13.5px;color:var(--nb-text)"></p>
-            </div>
-          </div>
-
-          <div class="nb-code-pane">
-            <div class="nb-code-pane-head">
-              <span>Resulting Implementation (Smallest Code Passing All 3 Gates)</span>
-              <span style="color:var(--nb-green)">✓ Safe · ✓ Fast at Named Load · ✓ Done</span>
-            </div>
-            <pre id="nb-sim-code" class="nb-code-pre"></pre>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 4: LIVE PRETOOLUSE GUARD & CONFIG CENSORSHIP SANDBOX -->
-    <section id="guard" class="nb-section">
-      <div class="nb-eyebrow"><span>04</span> // Live PreToolUse Guard Sandbox</div>
-      <h2 class="nb-h2">Deterministic interception before a bad write or secret ever hits disk.</h2>
-      <p class="nb-lead">
-        Prompt instructions alone don’t stop an agent at token 140,000 from pasting a test key or corrupting an audit log. NeckBeard’s zero-dependency <code>hooks/guard.js</code> inspects <code>Write</code>, <code>Edit</code>, <code>MultiEdit</code>, <code>NotebookEdit</code>, and <code>Bash</code> calls in under 15 milliseconds.
-      </p>
-
-      <div class="nb-workbench">
-        <div class="nb-wb-head">
-          <div class="nb-wb-tabs" role="tablist">
-            <button type="button" class="nb-wb-tab active" data-guard-case="secret">1. Hardcoded AWS / Stripe Secret</button>
-            <button type="button" class="nb-wb-tab" data-guard-case="vibes">2. Immutable .ai-audit/ Tampering</button>
-            <button type="button" class="nb-wb-tab" data-guard-case="censor">3. Shared .neckbeard.json URL Leak</button>
-            <button type="button" class="nb-wb-tab" data-guard-case="paranoid">4. Paranoid Mode: curl | sh</button>
-          </div>
-          <span class="nb-pill" id="nb-guard-verdict" style="color:var(--nb-red);border-color:rgba(225,29,72,0.45)">BLOCKED</span>
-        </div>
-
-        <div class="nb-wb-body">
-          <div class="nb-code-split">
-            <div class="nb-code-pane">
-              <div class="nb-code-pane-head">
-                <span>Intercepted Agent Tool Call</span>
-                <span id="nb-guard-tool" style="color:var(--nb-cyan)"></span>
-              </div>
-              <pre id="nb-guard-input" class="nb-code-pre"></pre>
-            </div>
-            <div class="nb-code-pane">
-              <div class="nb-code-pane-head">
-                <span>hooks/guard.js Decision Output</span>
-                <span style="color:var(--nb-red)">permissionDecision: "deny"</span>
-              </div>
-              <pre id="nb-guard-output" class="nb-code-pre" style="color:#fda4af"></pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 5: INTERACTIVE REVIEW, AUDIT (LITE VS COMPLETE) & DEBT WORKBENCH -->
-    <section id="audits" class="nb-section">
-      <div class="nb-eyebrow"><span>05</span> // Reviews, Lite vs. Complete Repo Audits &amp; Debt Expiry</div>
-      <h2 class="nb-h2">No CWE bingo. Every finding has a concrete exploit or load bottleneck—plus every variant in the repo.</h2>
-      <p class="nb-lead">
-        Whether you are gating a pull request with <code>/neckbeard-review --ci</code>, running a targeted boundary trace with <code>/neckbeard-audit lite</code>, or performing a 100% file-by-file inspection with <code>/neckbeard-audit complete</code>, NeckBeard proves every finding and proposes the smallest root fix that deletes code.
-      </p>
-
-      <div class="nb-workbench">
-        <div class="nb-wb-head">
-          <div class="nb-wb-tabs" role="tablist">
-            <button type="button" class="nb-wb-tab active" data-audit-mode="review_ci">/neckbeard-review --ci</button>
-            <button type="button" class="nb-wb-tab" data-audit-mode="audit_lite">/neckbeard-audit lite (Default)</button>
-            <button type="button" class="nb-wb-tab" data-audit-mode="audit_complete">/neckbeard-audit complete (Every File)</button>
-            <button type="button" class="nb-wb-tab" data-audit-mode="debt">/neckbeard-debt (Load Expiry)</button>
-          </div>
-        </div>
-
-        <div class="nb-wb-body">
-          <div class="nb-code-pane">
-            <div class="nb-code-pane-head">
-              <strong id="nb-audit-title" style="color:var(--nb-green)"></strong>
-              <span id="nb-audit-meta" style="color:var(--nb-muted)"></span>
-            </div>
-            <pre id="nb-audit-output" class="nb-code-pre"></pre>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 5B: FRONT-AND-CENTER VIBES PROTOCOL (.AI-AUDIT/) DASHBOARD INTEGRATION -->
-    <section id="vibes-hub" class="nb-section">
-      <div class="nb-eyebrow"><span>06</span> // VIBES Protocol (.ai-audit/) Command Center &amp; Provenance Hub</div>
-      <h2 class="nb-h2">Preventive engineering meets cryptographic AI provenance (<a href="https://www.itsavibe.ai" target="_blank" rel="noopener">itsavibe.ai</a>).</h2>
-      <p class="nb-lead">
-        NeckBeard brings the open <strong><a href="https://www.itsavibe.ai" target="_blank" rel="noopener">VIBES Protocol</a></strong> (<code>VIBES v1.1</code>, <code>VERIFY v1.0</code>, <code>PRISM v1.0</code>, <code>EVOLVE v1.0</code>, <code>TRACE v1.0</code>) front and center in the local <strong>NeckBeard Security &amp; Engineering Command Center</strong> (<code>~/.config/neckbeard/telemetry/dashboard.html</code>). When <code>.ai-audit/</code> is present in a workspace, NeckBeard visualizes it automatically—and when absent, includes a one-click interactive preview and onboarding guide.
-      </p>
-
-      <div class="nb-grid-3" style="margin-bottom:20px">
-        <div class="nb-card">
-          <h3 style="color:var(--nb-cyan)">1. VIBES v1.1 &amp; VERIFY v1.0</h3>
-          <p>Tracks content-addressed SHA-256 blobs (<code>.ai-audit/blobs/</code>), line-range file attributions, and Ed25519 DSSE attestation coverage while <code>hooks/guard.js</code> blocks any direct agent tampering with immutable evidence files.</p>
-        </div>
-        <div class="nb-card">
-          <h3 style="color:var(--nb-amber)">2. PRISM v1.0 Risk Histogram</h3>
-          <p>Renders live SVG histograms of Low (<code>&lt;0.30</code>), Moderate (<code>0.30–0.59</code>), High (<code>0.60–0.79</code>), and Critical (<code>&gt;=0.80</code>) PRISM risk scores and highlights file hotspots for <code>/neckbeard-review</code>.</p>
-        </div>
-        <div class="nb-card">
-          <h3 style="color:var(--nb-green)">3. EVOLVE v1.0 &amp; TRACE v1.0</h3>
-          <p>Cross-references <code>risk:</code> comments in source code against EVOLVE decision records in <code>.ai-audit/manifest.json</code> (flagging <code>unrecorded-decision</code>) and tracks TRACE IoC incident resolution.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 6: OFFICIAL NECKBEARD BADGE & SEAL OF SURVIVAL -->
-    <section id="badge" class="nb-section">
-      <div class="nb-eyebrow"><span>07</span> // The Official Badge &amp; Seal of Survival</div>
-      <h2 class="nb-h2">Built or refactored with NeckBeard? Put the Seal in your README.</h2>
-      <p class="nb-lead">
-        We created two official assets for developers and autonomous agents: a compact <strong>GitHub README Pill Badge</strong> highlighting NeckBeard’s three core pillars (<em>Minimal Code · Boundary Safe · Right-Sized Scale</em>) and the <strong>Principal-Engineer Seal of Survival</strong> featuring our sumi-ink ThinkPad mascot.
-      </p>
-
-      <div class="nb-card" style="margin-bottom:24px;border-color:rgba(245,158,11,0.45);background:rgba(245,158,11,0.06)">
-        <h3 style="color:var(--nb-amber);font-size:16px">📜 The NeckBeard Badge Honor Code</h3>
-        <p style="color:var(--nb-text);font-size:14.5px;margin-top:4px">
-          Please only display this badge or seal in a project’s <code>README.md</code> or documentation if:
-          <strong>(1)</strong> the project was <strong>built with NeckBeard</strong> active at <code>full</code> or <code>paranoid</code> level, <strong>OR</strong>
-          <strong>(2)</strong> you ran <strong><code>/neckbeard-audit</code></strong> (<code>lite</code> or <code>complete</code>) on an existing codebase and <strong>actually refactored or rewrote</strong> the confirmed <em>Must fix</em> and <em>Should fix</em> findings. Running an audit and ignoring the report does not earn the fedora.
-        </p>
-      </div>
-
-      <div class="nb-grid-2">
-        <!-- Asset 1: Compact Pill Badge -->
-        <div class="nb-seal-box">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <strong style="font-size:16px">1. Compact README Value Pill (SVG)</strong>
-            <button type="button" class="nb-copy-btn" data-copy-target="nb-badge-md">Copy Markdown</button>
-          </div>
-          <div class="nb-seal-preview">
-            <img src="assets/badge.svg" alt="NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale">
-          </div>
-          <pre id="nb-badge-md" class="nb-code-pre" style="background:#060807;border:1px solid var(--nb-border);border-radius:8px;padding:12px">[![NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale](https://neckbeard.tech/assets/badge.svg)](https://neckbeard.tech)</pre>
-        </div>
-
-        <!-- Asset 2: Full Seal of Survival -->
-        <div class="nb-seal-box">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <strong style="font-size:16px">2. Official Seal of Survival (SVG &amp; Hi-DPI PNG)</strong>
-            <button type="button" class="nb-copy-btn" data-copy-target="nb-seal-md">Copy Markdown</button>
-          </div>
-          <div class="nb-seal-preview">
-            <img src="assets/seal.png" width="380" alt="Built &amp; Audited with NeckBeard — Principal-Engineer Verified">
-          </div>
-          <pre id="nb-seal-md" class="nb-code-pre" style="background:#060807;border:1px solid var(--nb-border);border-radius:8px;padding:12px">[![Built &amp; Audited with NeckBeard — Principal-Engineer Verified](https://neckbeard.tech/assets/seal.svg)](https://neckbeard.tech)</pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 7: MULTI-HARNESS INSTALL MATRIX -->
-    <section id="install" class="nb-section">
-      <div class="nb-eyebrow"><span>07</span> // Universal Agent Portability</div>
-      <h2 class="nb-h2">One canonical ruleset. Native plugins for every coding agent.</h2>
-      <p class="nb-lead">
-        <code>skills/neckbeard/SKILL.md</code> and <code>AGENTS.md</code> are enforced by CI to stay byte-for-byte identical. Install the full lifecycle plugin in Claude Code or Codex, the TUI extension in Pi / Oh My Pi, or drop <code>AGENTS.md</code> into any repository.
-      </p>
-
-      <div class="nb-grid-3">
-        <div class="nb-card">
-          <h3>Claude Code (CLI &amp; Desktop)</h3>
-          <p style="margin-bottom:12px">Loads all 5 skills, 4 lifecycle hooks, <code>PreToolUse</code> guard, <code>AbovePrompt</code> HUD, and local Command Center (<code>~/.config/neckbeard/telemetry/dashboard.html</code>).</p>
-          <pre class="nb-code-pre" style="background:#080b0a;border:1px solid var(--nb-border);border-radius:8px">claude plugin marketplace add openasocket/NeckBeard
-claude plugin install neckbeard@neckbeard</pre>
-        </div>
-
-        <div class="nb-card">
-          <h3>OpenAI Codex CLI</h3>
-          <p style="margin-bottom:12px">Loads <code>.codex-plugin/plugin.json</code>, the 5 skills (<code>$neckbeard</code>, <code>$neckbeard-review</code>, <code>$neckbeard-audit</code>, <code>$neckbeard-debt</code>, <code>$neckbeard-gain</code>), and lifecycle hooks.</p>
-          <pre class="nb-code-pre" style="background:#080b0a;border:1px solid var(--nb-border);border-radius:8px">codex plugin marketplace add openasocket/NeckBeard
-codex plugin add neckbeard@neckbeard</pre>
-        </div>
-
-        <div class="nb-card">
-          <h3>GitHub Copilot CLI &amp; Editor</h3>
-          <p style="margin-bottom:12px">Loads <code>.github/plugin/plugin.json</code> and reads <code>AGENTS.md</code> / <code>.github/copilot-instructions.md</code> automatically.</p>
-          <pre class="nb-code-pre" style="background:#080b0a;border:1px solid var(--nb-border);border-radius:8px">copilot plugin marketplace add openasocket/NeckBeard
-copilot plugin install neckbeard@neckbeard</pre>
-        </div>
-
-        <div class="nb-card">
-          <h3>Grok CLI (<code>grok</code>)</h3>
-          <p style="margin-bottom:12px">Installs from <code>.grok-plugin/marketplace.json</code> and registers all five slash skills.</p>
-          <pre class="nb-code-pre" style="background:#080b0a;border:1px solid var(--nb-border);border-radius:8px">grok plugin install openasocket/NeckBeard --trust</pre>
-        </div>
-
-        <div class="nb-card">
-          <h3>Antigravity CLI &amp; Gemini CLI</h3>
-          <p style="margin-bottom:12px">Native plugin and Gemini extension manifest with zero hook-event collisions.</p>
-          <pre class="nb-code-pre" style="background:#080b0a;border:1px solid var(--nb-border);border-radius:8px">agy plugin install https://github.com/openasocket/NeckBeard
-gemini extensions install https://github.com/openasocket/NeckBeard</pre>
-        </div>
-
-        <div class="nb-card">
-          <h3>Pi / Oh My Pi &amp; OpenCode</h3>
-          <p style="margin-bottom:12px">Includes <code>pi-extension/index.js</code> for live TUI status bars and <code>.opencode/plugins/neckbeard.mjs</code> for turn-by-turn rule &amp; boundary injection.</p>
-          <pre class="nb-code-pre" style="background:#080b0a;border:1px solid var(--nb-border);border-radius:8px">pi install npm:neckbeard
-# Or add .opencode/plugins/neckbeard.mjs</pre>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Principal Engineer 3 a.m. Incident Pager Modal -->
-  <div id="nb-pager-modal" class="nb-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="nb-pager-title">
-    <div class="nb-modal">
-      <div class="nb-modal-head">
-        <span id="nb-pager-title">🚨 03:14 UTC PAGER ALERT // UNJUSTIFIED ABSTRACTION REJECTED</span>
-        <button type="button" id="nb-pager-close" class="nb-copy-btn">Dismiss</button>
-      </div>
-      <div class="nb-modal-body">
-        <p>
-          He stops typing on his ThinkPad X220, looks over his thick-framed glasses, and rejects your request to add an <code>EnterpriseAbstractSingletonStrategyFactory</code>:
-        </p>
-        <pre>Question Ladder Rung 1: "Does it need to exist?" -> NO.
-You have exactly 1 concrete implementation and a named load of 250 rps.
-Adding 4 wrapper classes adds 0 security, 0 throughput, and 380 lines of
-indirection to debug during the next outage.
-
-Action taken: Deleted the factory. Wrote a 12-line pure function with
-parameterized SQL, server-side owner_id check, and 1 hostile-input test.</pre>
       </div>
     </div>
   </div>
+</div></div></section>
 
-  <!-- Footer with Mandatory NeckBeard Signature -->
-  <footer class="nb-shell nb-footer">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-      <div>
-        <strong>NeckBeard</strong> · MIT License · <a href="https://github.com/openasocket/NeckBeard">github.com/openasocket/NeckBeard</a> · Inspired by <a href="https://github.com/DietrichGebert/ponytail">Ponytail</a> · Provenance via <a href="https://www.itsavibe.ai">VIBES Protocol</a>
+<!-- 07 OFFICIAL BADGE & SEAL OF SURVIVAL -->
+<section id="badge" class="sec sec-deferred"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">07</span>Project Badge</div>
+  <div>
+    <h2 class="decode">The Seal of Survival.<br><em>Show your code was built right.</em></h2>
+    <p class="lead">A badge for builders and teams who use NeckBeard to keep their AI-generated code lean, safe, and ready for real traffic. Pick the compact README pill or the full inspection stamp—or copy the one-click prompt below and let your AI agent earn it for you:</p>
+
+    <div class="honor-box">
+      <b>⚠ THE NECKBEARD BADGE HONOR CODE:</b> Please only add this badge or seal to your project's <code>README.md</code> or docs if:
+      <ol style="margin:8px 0 0;padding-left:20px">
+        <li>You <strong>built the project with NeckBeard</strong> turned on (<code>full</code> or <code>paranoid</code>), <strong>OR</strong></li>
+        <li>You ran <strong><code>/neckbeard-audit</code></strong> on an existing repository and <strong>actually fixed</strong> the <strong>Must fix</strong> and <strong>Should fix</strong> issues it found.</li>
+      </ol>
+      <div style="margin:6px 0 0;font-size:13px;color:var(--muted)"><em>Slapping the fedora onto an unaudited repo that leaks user data or crashes at 50 users will summon him to your 3 a.m. outage call.</em></div>
+    </div>
+
+    <div class="badge-grid">
+      <div class="badge-card">
+        <h3 style="font:700 15px var(--mono);margin-bottom:14px">1. Compact README Value Pill Badge</h3>
+        <div class="badge-preview">
+          <img src="assets/badge.svg" width="456" height="28" loading="lazy" alt="NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale">
+        </div>
+        <div class="snip-grid">
+          <div class="snip">
+            <div class="snip-head"><span>Markdown (README.md)</span><button class="copy" type="button" data-copy-target="snip-pill-md">copy</button></div>
+            <pre id="snip-pill-md" data-raw="[![NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale](https://neckbeard.tech/assets/badge.svg)](https://neckbeard.tech)">[![NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale](https://neckbeard.tech/assets/badge.svg)](https://neckbeard.tech)</pre>
+          </div>
+          <div class="snip">
+            <div class="snip-head"><span>HTML Embed</span><button class="copy" type="button" data-copy-target="snip-pill-html">copy</button></div>
+            <pre id="snip-pill-html" data-raw='<a href="https://neckbeard.tech"><img src="https://neckbeard.tech/assets/badge.svg" width="456" height="28" alt="NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale"></a>'>&lt;a href="https://neckbeard.tech"&gt;&lt;img src="https://neckbeard.tech/assets/badge.svg" width="456" height="28" alt="NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale"&gt;&lt;/a&gt;</pre>
+          </div>
+        </div>
       </div>
-      <div>
-        <a href="assets/badge.svg">badge.svg</a> · <a href="assets/seal.svg">seal.svg</a> · <a href="assets/seal.png">seal.png</a>
+
+      <div class="badge-card">
+        <h3 style="font:700 15px var(--mono);margin-bottom:14px">2. "Built &amp; Audited with NeckBeard" Engineering Value Seal</h3>
+        <div class="badge-preview">
+          <img src="assets/seal.png?v=8" width="380" height="182" loading="lazy" alt="Built and Audited with NeckBeard: Minimal Code, Protected User Data, Built for Real Traffic, Simple UX Complete Inside">
+        </div>
+        <div class="snip-grid">
+          <div class="snip">
+            <div class="snip-head"><span>Markdown (README.md / Docs Footer)</span><button class="copy" type="button" data-copy-target="snip-seal-md">copy</button></div>
+            <pre id="snip-seal-md" data-raw="[![Built & Audited with NeckBeard — Principal-Engineer Verified](https://neckbeard.tech/assets/seal.svg)](https://neckbeard.tech)">[![Built &amp; Audited with NeckBeard — Principal-Engineer Verified](https://neckbeard.tech/assets/seal.svg)](https://neckbeard.tech)</pre>
+          </div>
+          <div class="snip">
+            <div class="snip-head"><span>Paste This Prompt into Your AI Agent to Audit, Fix &amp; Add the Badge</span><button class="copy" type="button" data-copy-target="snip-agent-prompt">copy</button></div>
+            <pre id="snip-agent-prompt" data-raw="Run /neckbeard-audit on this repository, refactor or rewrite every confirmed Must-fix and Should-fix finding, verify all tests pass, and then add the NeckBeard Audited badge ([![NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale](https://neckbeard.tech/assets/badge.svg)](https://neckbeard.tech)) to README.md.">Run /neckbeard-audit on this repository, refactor or rewrite every confirmed Must-fix and Should-fix finding, verify all tests pass, and then add the NeckBeard Audited badge ([![NeckBeard Audited: Minimal Code · Boundary Safe · Right-Sized Scale](https://neckbeard.tech/assets/badge.svg)](https://neckbeard.tech)) to README.md.</pre>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="nb-footer-bar">
-      <strong>Load assumed:</strong> static GitHub Pages CDN asset delivery (&lt; 35 KB CSS+JS, 0 external runtime dependencies, 60 fps canvas radar) ·
-      <strong>Not checked:</strong> server-side database queries (static site has no backend state) ·
-      <strong>Risk to decide:</strong> none — Honor Code applies to projects displaying the NeckBeard Seal of Survival.
-    </div>
-  </footer>
+  </div>
+</div></div></section>
 
-  <script src="assets/site.js" defer></script>
+<!-- 08 INSTALL -->
+<section id="install" class="sec sec-deferred"><div class="wrap"><div class="in">
+  <div class="sh"><span class="no holo">08</span>Install</div>
+  <div>
+    <h2 class="decode">Two lines to install.<br><em>Works out of the box.</em></h2>
+    <p class="lead">Pick your AI coding tool below. Once installed, NeckBeard automatically protects your sessions—no configuration files or setup wizard required:</p>
+    <div class="switch tabs" role="tablist" aria-label="Agent Harness">
+      <button role="tab" aria-selected="true" data-t="cc">Claude Code</button>
+      <button role="tab" aria-selected="false" data-t="codex">Codex</button>
+      <button role="tab" aria-selected="false" data-t="copilot">Copilot CLI</button>
+      <button role="tab" aria-selected="false" data-t="grok">Grok CLI</button>
+      <button role="tab" aria-selected="false" data-t="agy">Antigravity CLI</button>
+      <button role="tab" aria-selected="false" data-t="gemini">Gemini CLI</button>
+      <button role="tab" aria-selected="false" data-t="pi">Pi / Oh My Pi</button>
+      <button role="tab" aria-selected="false" data-t="opencode">OpenCode / Kilo</button>
+    </div>
+    <div class="cmd" data-p="cc"><pre><span class="p">$ </span>claude plugin marketplace add openasocket/NeckBeard
+<span class="p">$ </span>claude plugin install neckbeard@neckbeard</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="codex" hidden><pre><span class="p">$ </span>codex plugin marketplace add openasocket/NeckBeard
+<span class="p">$ </span>codex plugin add neckbeard@neckbeard</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="copilot" hidden><pre><span class="p">$ </span>copilot plugin marketplace add openasocket/NeckBeard
+<span class="p">$ </span>copilot plugin install neckbeard@neckbeard</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="grok" hidden><pre><span class="p">$ </span>grok plugin install openasocket/NeckBeard --trust</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="agy" hidden><pre><span class="p">$ </span>agy plugin install https://github.com/openasocket/NeckBeard</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="gemini" hidden><pre><span class="p">$ </span>gemini extensions install https://github.com/openasocket/NeckBeard</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="pi" hidden><pre><span class="p">$ </span>pi install git:github.com/openasocket/NeckBeard</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="opencode" hidden><pre><span class="p">// opencode.json or kilo.jsonc:</span>
+{ "plugins": ["github:openasocket/NeckBeard"] }</pre><button class="copy" type="button">copy</button></div>
+
+    <p class="fine">Using Cursor, Windsurf, Kiro, Cline, Zed, or another tool? Drop <a href="https://neckbeard.tech/AGENTS.md">AGENTS.md</a> into your project folder or see <a href="https://neckbeard.tech/INSTALL.md">INSTALL.md</a>.</p>
+
+    <dl class="cmds">
+      <dt>/neckbeard map</dt><dd>automatically scan (or refresh) your project's risk map in <code>.neckbeard.json</code>—showing where requests enter, where outside APIs are called, and where logins, database queries, or shell commands happen</dd>
+      <dt>/neckbeard-audit [lite|complete]</dt><dd>audit your key user flows &amp; map spots fast (<code>lite</code>, default) or inspect every single code, config &amp; documentation file in your repo (<code>complete</code>)—and optionally generate a step-by-step fix plan</dd>
+      <dt>/neckbeard-review [--ci]</dt><dd>review your agent's latest changes in plain English, search the repo for duplicate copies of any bug it finds, and output a pass/fail verdict for CI</dd>
+      <dt>/neckbeard load &lt;traffic&gt;</dt><dd>save your expected traffic target (e.g. <code>/neckbeard load 250 rps, 50k rows</code> or per-route <code>webhook-in=2000 rps</code>) to <code>.neckbeard.json</code> so your agent builds for your real numbers</dd>
+      <dt>/neckbeard-debt</dt><dd>list all temporary shortcuts (<code>risk:</code> comments) in your codebase and flag any that put user data at risk or have been outgrown by your current traffic target</dd>
+      <dt>/neckbeard-gain</dt><dd>open your local savings &amp; safety report and visual HTML dashboard (tokens, cost, code reuse %, lines deleted, blocked mistakes, and project map graph)</dd>
+      <dt>/neckbeard share on|off</dt><dd>choose whether <code>.neckbeard.json</code> is committed to Git so teammates &amp; subagents share the map (<code>on</code>, default, auto-scrubbed of private URLs/secrets) or kept only on your computer (<code>off</code>)</dd>
+      <dt>/neckbeard lite|full|paranoid|off</dt><dd>adjust how strict NeckBeard is during a session (<code>full</code> is the default; <code>paranoid</code>—or its Ponytail-compatible alias <code>ultra</code>—also challenges unnecessary complexity and blocks risky terminal shortcuts)</dd>
+      <dt>/neckbeard band [on|off|import|board]</dt><dd>toggle the live status bar above the Claude Code prompt, import past session stats, or launch your local HTML dashboard</dd>
+    </dl>
+  </div>
+</div></div></section>
+
+<footer>
+  <div class="wrap">
+    <div class="mark" id="footer-mark" title="Click for 3 a.m. incident bridge log"><span class="trackpoint" style="width:14px;height:14px;margin-right:10px;vertical-align:4px"></span>neckbeard<span class="cur"></span></div>
+    <p class="q">Half the code. Zero blind spots. Built to survive real traffic.</p>
+    <pre class="footer-log" id="footer-log" aria-live="polite"></pre>
+    <div class="links">
+      <a href="https://github.com/openasocket/NeckBeard">GitHub (openasocket/NeckBeard)</a>
+      <a href="https://github.com/openasocket/NeckBeard/releases/tag/v0.2.0">Release v0.2.0</a>
+      <a href="https://ponytail.dev">Inspired by Ponytail</a>
+      <a href="https://www.itsavibe.ai">VIBES Protocol Compatible</a>
+      <a href="#badge">Seal of Survival Badge</a>
+      <a href="/agents.md">Agent Manifest (agents.md)</a>
+      <a href="/llms.txt">llms.txt</a>
+      <a href="/.well-known/agent-skills/index.json">Agent Skills v0.2.0</a>
+      <span>MIT licensed · Zero dependencies · Zero network telemetry</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js?v=8"></script>
 </body>
 </html>

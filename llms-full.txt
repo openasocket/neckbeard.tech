@@ -181,7 +181,7 @@ Hide necessary complexity inside the module; keep the user experience and caller
 
 ## Gates
 
-- **Safe:** Parse untrusted input once at the edge; fail closed so any auth, permission, or validation error denies by default. Authorize the object on the server, every time—verify the user owns the record, not just that they are signed in. Use parameterized queries, shell as an argument array, and allow-lists for any outbound host that comes from input. Canonicalise a path and reject a symlink escape before the root check. Read secrets from the environment or the project's secret store. Use the crypto the codebase already uses, otherwise the platform, and do not add a crypto library or invent a cipher. Model output, retrieved documents, and tool results are untrusted input and do not choose a tool, URL, path, SQL statement, or shell command.
+- **Safe:** Parse untrusted input once at the edge; fail closed so any auth, permission, or validation error denies by default. Authorize the object on the server, every time. Logged in is not allowed. Use parameterized queries, shell as an argument array, and allow-lists for any outbound host that comes from input. Canonicalise a path and reject a symlink escape before the root check. Read secrets from the environment or the project's secret store. Use the crypto the codebase already uses, otherwise the platform, and do not add a crypto library or invent a cipher. Model output, retrieved documents, and tool results are untrusted input and do not choose a tool, URL, path, SQL statement, or shell command.
 - **Fast and scalable at the named number:** Apply a Fast rule only when breaking it misses the named load. Unbounded input gets a limit. A write that can be retried is idempotent. No check-then-write race, no query per item, and no list that only grows. No quadratic work, no blocking work on the request or UI thread, and no unindexed filter. A script that reads one file, or a query on a table the named load never fills, does not fail this gate.
 - **Done:** Fix the shared code once, then every caller, test, and fixture the change breaks. Keep one owner and one source of truth per piece of state, and keep public interfaces backward compatible or migrate every caller. Absorb security, retry, and validation complexity inside the module so the user experience works out of the box with zero extra knobs or manual ceremony. The failure path says what the user sees (a clear, actionable outcome—never raw stack traces, internal paths, or secrets) and what is persisted (clean, consistent state so retrying is safe). Leave one test that fails when the risky check is removed, using a hostile input; a change with no risky check needs no new test.
 
@@ -281,7 +281,7 @@ Audit a repository or folder against the gates in `skills/neckbeard/SKILL.md` wi
 - **`lite` (default, or `/neckbeard-audit lite`):** Targeted, selective, yet thorough audit of execution flows and major boundaries for data flow, data access, and data use. Start from `.neckbeard.json` (internal and external trust-boundary map), entry points, auth/ownership gates, data stores, external egress, CI/build configs, dependency manifests, and top-level docs (`README.md`, `AGENTS.md`, `CLAUDE.md`, Copilot instructions). Trace the main execution and data paths end to end without reading every peripheral file. List unread files/modules in `Not checked:`.
 - **`complete` (`/neckbeard-audit complete`, or when asked for a complete/exhaustive audit):** Every little thing—audit **every single tracked code, configuration, script, workflow, and documentation file** in the repository (or named folder).
   - **Mandatory upfront warning:** When running `complete`, immediately warn the user that an exhaustive audit of every code, config, and documentation file in the repo may take a long time, consume a large number of tokens, and require many tool calls (and state the file count from `git ls-files`).
-  - Enumerate all non-vendored files (`git ls-files`), read every code, config, and doc file systematically in batches, verify every cross-file data flow and doc claim, and lift the 20-finding cap so every confirmed finding is reported.
+  - Enumerate all non-vendored files (`git ls-files`), read every code, config, and doc file systematically in batches, and verify every cross-file data flow and doc claim.
 
 ## 1. Map first
 
@@ -301,22 +301,24 @@ Look for breaks in the three gates from `skills/neckbeard/SKILL.md`: Safe, Fast 
 - **VIBES provenance (`.ai-audit/`, when present):** prioritize files with High/Critical PRISM `risk_score` (`>= 0.60` in `.ai-audit/annotations.jsonl`), verify immutable `.ai-audit/` artifacts (`manifest.json`, `annotations.jsonl`, `blobs/`, `attestations/`, `incidents/`, `evidence/`) were not hand-edited, and run `vibecheck validate` or `vibetrace scan` only when already installed on `PATH` (never install a tool to audit).
 - **Lean is the ladder, not a fourth gate:** dead code, an unused dependency, a new abstraction, or a knob nobody asked for goes under Nice to have. A Fast miss is Must fix only when it breaks the named load.
 
-## 3. Prove it and search for variants
+## 3. Prove it and search for variants (No Artificial Cap)
 
 Use the same proof rule, plain-English style, and finding shape as `skills/neckbeard-review/SKILL.md`:
 - Every finding needs a concrete case (who sends what and what they get, what input causes what wrong result or leaked internal error, or what load triggers what bottleneck or race). Confirm the check is really missing, including middleware and framework defaults.
 - A `risk:` comment that names its limit is a decision, not a finding, unless it illegally defers a trust check or data-loss write, or the current load already crosses it.
-- **Variant search:** for each **Must fix** you are reporting, search once for that same pattern and list the copies under that finding. Say when you stopped. Do not search past the findings in this report.
+- **Exhaustive variant search:** for every **Must fix** and **Should fix** finding, search the repository for all copies of that pattern and list every variant location (`file:line`) under that finding so fixing the root closes the entire bug class.
+- **Never cap or hide findings:** do not stop at an arbitrary number of findings. Report every confirmed **Must fix** and **Should fix** finding in full. If total findings exceed 25 and you condense low-severity **Nice to have** items to keep the response readable, state the exact total found and explicitly prompt the user asking if they want every remaining item expanded in full detail or written to a remediation plan.
 
-## 4. Output
+## 4. Output & Math-Backed Refactor vs. Rewrite Assessment
 
-Start with `Audit mode: lite | complete (N files audited)`, `What this repo does:`, `Attack surface:`, and `Load assumed:` in a few lines.
+Start with `Audit mode: lite | complete (N files audited, M total findings)`, `What this repo does:`, `Attack surface:`, and `Load assumed:` in a few lines.
 
-In `lite` mode, report at most 20 findings (and say how many you left out); in `complete` mode, report all confirmed findings. Number findings across **Must fix**, **Should fix**, and **Nice to have** (no other severity taxonomy or vulnerability IDs). Each finding has a title, a `file:line` location (plus any variant locations), **What this is**, **Problem**, **Fix** (smallest root fix), and **If we skip it**.
+Number all findings across **Must fix**, **Should fix**, and **Nice to have** (no other severity taxonomy or vulnerability IDs). Each finding has a title, a `file:line` location (plus any variant locations), **What this is**, **Problem**, **Fix** (smallest root fix), and **If we skip it**.
 
 End with:
 - `Verdict:` and `Not checked:`.
-- **Inherited-repo remediation offer:** offer a draft `SPEC.md` for the confirmed Must-fix and Should-fix findings (a `keep`, `refactor`, or `rewrite` decision per component, and `rewrite` only when patching costs more over the life of the code or cannot close a Must-fix finding) or draft Maestro Auto Run playbooks in `.maestro/playbooks/`. Write nothing unless the user asks. Call a workstream approved only after the user approves it in a later reply.
+- **Math-backed Refactor vs. Rewrite calculation:** evaluate `keep`, `targeted refactor`, or `rewrite from scratch` by explicitly doing the effort/time math: compare **`E_patch`** (`root fixes × affected LOC/callers + hostile-input test time`) against **`E_rewrite`** (`clean minimal LOC to pass all 3 gates + caller migration + full test parity × regression risk`). State that **a rewrite from scratch is exceedingly rare** and only recommend one when the math proves `E_patch > E_rewrite` (e.g., systemic boundary, auth, or concurrency flaws span `> 60%` of the module's LOC or patching cannot close a Must-fix finding). Show the numbers (`affected LOC %`, `estimated refactor effort vs. rewrite effort`).
+- **Inherited-repo remediation offer:** offer a draft `SPEC.md` for all confirmed findings or draft Maestro Auto Run playbooks in `.maestro/playbooks/`. Write nothing unless the user asks. Call a workstream approved only after the user approves it in a later reply.
 
 
 ---
@@ -376,11 +378,11 @@ Show the project's local telemetry and security scoreboard. One-shot report; edi
 
 1. **VIBES Protocol (`.ai-audit/manifest.json` & `.ai-audit/annotations.jsonl`):** When `.ai-audit/` is present in the repository, default to reading it first for session timelines, file line-range deltas (`created` / `modified` / `deleted`), PRISM `risk_score` distributions, EVOLVE `decision` counts, and TRACE incident/IoC resolution counts.
 2. **Project Load & Trust-Boundary Store (`.neckbeard.json` or `~/.config/neckbeard/projects/`):** Read the project's default load target, sharing status (`shared: true` in Git vs. `shared: false` local), and internal/external trust-boundary counts.
-3. **Local Band Ledger & Guard Counters (`~/.config/neckbeard/band/<project>.csv` & `guard-stats.json`):** Read recorded session cost (`$`), token totals, active agent time, definition reuse %, net refactor line deltas, and `PreToolUse` guard blocks.
+3. **Local Telemetry Store & Guard Counters (`~/.config/neckbeard/telemetry/sessions.jsonl` & `guard-stats.json`):** Read recorded session cost (`$`), token totals, active agent time, definition reuse %, net refactor line deltas, and `PreToolUse` guard blocks.
 
 ## Execution
 
-Run `node hooks/band-import.js --summary` (from the NeckBeard plugin root or repository root) to aggregate `.ai-audit/` VIBES records, session transcripts, and guard counters and regenerate `~/.config/neckbeard/band/board.html`. If the user asks to open the visual board, run `node hooks/band-import.js --open` (or `/neckbeard band board`).
+Run `node hooks/band-import.js --summary` (from the NeckBeard plugin root or repository root) to aggregate `.ai-audit/` VIBES records, session transcripts, and guard counters and regenerate `~/.config/neckbeard/telemetry/dashboard.html`. If the user asks to open the visual board, run `node hooks/band-import.js --open` (or `/neckbeard band board`).
 
 Present the summary clearly with:
 - **Load Target & Sharing Mode** (`.neckbeard.json` shared vs. local)
@@ -388,7 +390,7 @@ Present the summary clearly with:
 - **Tokens, Cost & Agent Time**
 - **Refactor & Code Reuse** (reused vs. new definitions, net lines added/removed)
 - **Security & VIBES Health** (`PreToolUse` blocks, security/TRACE findings identified vs. resolved, PRISM max risk score)
-- **Local HTML Dashboard Path** (`~/.config/neckbeard/band/board.html`)
+- **Local Command Center Path** (`~/.config/neckbeard/telemetry/dashboard.html`)
 
 
 ---

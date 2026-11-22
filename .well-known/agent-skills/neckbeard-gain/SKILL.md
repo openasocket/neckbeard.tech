@@ -16,11 +16,11 @@ Show the project's local telemetry and security scoreboard. One-shot report; edi
 
 1. **VIBES Protocol (`.ai-audit/manifest.json` & `.ai-audit/annotations.jsonl`):** When `.ai-audit/` is present in the repository, default to reading it first for session timelines, file line-range deltas (`created` / `modified` / `deleted`), PRISM `risk_score` distributions, EVOLVE `decision` counts, and TRACE incident/IoC resolution counts.
 2. **Project Load & Trust-Boundary Store (`.neckbeard.json` or `~/.config/neckbeard/projects/`):** Read the project's default load target, sharing status (`shared: true` in Git vs. `shared: false` local), and internal/external trust-boundary counts.
-3. **Local Band Ledger & Guard Counters (`~/.config/neckbeard/band/<project>.csv` & `guard-stats.json`):** Read recorded session cost (`$`), token totals, active agent time, definition reuse %, net refactor line deltas, and `PreToolUse` guard blocks.
+3. **Local Telemetry Store & Guard Counters (`~/.config/neckbeard/telemetry/sessions.jsonl` & `guard-stats.json`):** Read recorded session cost (`$`), token totals, active agent time, definition reuse %, net refactor line deltas, and `PreToolUse` guard blocks.
 
 ## Execution
 
-Run `node hooks/band-import.js --summary` (from the NeckBeard plugin root or repository root) to aggregate `.ai-audit/` VIBES records, session transcripts, and guard counters and regenerate `~/.config/neckbeard/band/board.html`. If the user asks to open the visual board, run `node hooks/band-import.js --open` (or `/neckbeard band board`).
+Run `node hooks/band-import.js --summary` (from the NeckBeard plugin root or repository root) to aggregate `.ai-audit/` VIBES records, session transcripts, and guard counters and regenerate `~/.config/neckbeard/telemetry/dashboard.html`. If the user asks to open the visual board, run `node hooks/band-import.js --open` (or `/neckbeard band board`).
 
 Present the summary clearly with:
 - **Load Target & Sharing Mode** (`.neckbeard.json` shared vs. local)
@@ -28,4 +28,4 @@ Present the summary clearly with:
 - **Tokens, Cost & Agent Time**
 - **Refactor & Code Reuse** (reused vs. new definitions, net lines added/removed)
 - **Security & VIBES Health** (`PreToolUse` blocks, security/TRACE findings identified vs. resolved, PRISM max risk score)
-- **Local HTML Dashboard Path** (`~/.config/neckbeard/band/board.html`)
+- **Local Command Center Path** (`~/.config/neckbeard/telemetry/dashboard.html`)

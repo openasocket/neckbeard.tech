@@ -6,7 +6,7 @@
       "type": "skill-md",
       "description": "The smallest change that is correct, safe at the trust boundary it crosses, fast and scalable at a named load, simple for the end user, and finishes the paths it creates. Levels: lite, full (default), paranoid, off.",
       "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard/SKILL.md",
-      "digest": "sha256:46d2b1db0cfa4b6e1d9ab60b031f491d95fde5ffe2a8825b144f733ab0a790af"
+      "digest": "sha256:ef6e993809261c8abb0571026e04fcc8c150b57a1410875bf039e5575a87fd2d"
     },
     {
       "name": "neckbeard-review",
@@ -20,7 +20,7 @@
       "type": "skill-md",
       "description": "Audit a repository or folder for the Safe, Fast at the named load, and Done gates starting at entry points. Modes: lite (targeted execution flows and major data/trust boundaries) or complete (every code, config, and doc file).",
       "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-audit/SKILL.md",
-      "digest": "sha256:1bd61ad5e5121dd04a0596fc1d71d781481743391d5139428022ac3f88122184"
+      "digest": "sha256:80f647cc0567b410f65f4dcc3b32f673a0081aecaa28a7801d0b6c71d337d731"
     },
     {
       "name": "neckbeard-debt",
@@ -34,7 +34,7 @@
       "type": "skill-md",
       "description": "100% local telemetry report and HTML dashboard for NeckBeard: tokens used, cost, turn performance, definition reuse %, refactor line deltas, PreToolUse guard blocks, and VIBES (.ai-audit/) PRISM/TRACE health.",
       "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-gain/SKILL.md",
-      "digest": "sha256:05dde514ab1d667e04e43db7ffab22dddec74473819a828ec1efbc373bb75837"
+      "digest": "sha256:cc817769fa4d6ddb6fdf956f3974ae14466a68de24564355fdcfbb4fd6351b36"
     }
   ]
 }
