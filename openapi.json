@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "NeckBeard Discovery & Agent Skills API (neckbeard.tech)",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Public discovery endpoints for NeckBeard (https://neckbeard.tech) — the principal-engineer skillset and runtime guard for AI coding agents. All specifications, Agent Skills Discovery v0.2.0 skills, and project badges are public and require no authentication. See https://neckbeard.tech/auth.md and https://neckbeard.tech/agents.md."
   },
   "servers": [

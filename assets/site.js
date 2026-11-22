@@ -1896,7 +1896,7 @@
       '    | \\ | | ___  ___| | _| __ )  ___  __ _ _ __ __| |',
       '    |  \\| |/ _ \\/ __| |/ /  _ \\ / _ \\/ _` | \'__/ _` |',
       '    | |\\  |  __/ (__|   <| |_) |  __/ (_| | | | (_| |',
-      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.3.0',
+      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.3.1',
       '%c\n🧔 Inspecting the DOM? Good. 0 tracking pixels, 0 npm runtime dependencies, 0 MB of hydration slush.\nTry running %cneckbeard.audit()%c, %cneckbeard.blame()%c, %cneckbeard.coffee()%c, %cneckbeard.konami()%c, %cneckbeard.doom()%c, or %cneckbeard.sudo()%c in this console.',
     ].join('\n');
     console.log(
@@ -1917,8 +1917,8 @@
       'color:#c5d1c9;font-family:monospace'
     );
     window.neckbeard = {
-      version: '0.3.0',
-      releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.3.0',
+      version: '0.3.1',
+      releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.3.1',
       totalRants: RANTS.length,
       topics: () => Object.keys(RANTS_BY_TOPIC),
       rant: (topic) => { const q = nextRandomRant(topic); popCameo(q); return q; },

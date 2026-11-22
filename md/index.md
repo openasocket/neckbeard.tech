@@ -18,7 +18,7 @@ You don't need to know every security hole or database scaling trap—NeckBeard 
 
 ## 01. What It Does: You Focus on What to Build. He Handles What Could Go Wrong.
 
-Most people using AI coding agents know what feature they want, not the twenty invisible ways an agent's first draft can leak customer data, crash under real traffic, or rack up a huge token bill. NeckBeard adds a seasoned principal engineer to your agent—combining [Ponytail](https://ponytail.dev)'s code-shrinking checklist with automatic project mapping, plain-English repo audits, and a live safety guard.
+Most people using AI coding agents know what feature they want, not the twenty invisible ways an agent's first draft can leak customer data, crash under real traffic, or rack up a huge token bill. NeckBeard adds a seasoned principal engineer to your agent—inspired by [Ponytail](https://ponytail.dev)'s code-shrinking question ladder and built from the ground up with automatic project mapping, plain-English repo audits, and a live safety guard.
 
 ### Six Core Capabilities
 
@@ -31,7 +31,7 @@ Most people using AI coding agents know what feature they want, not the twenty i
 
 ### Results
 
-| Metric | No Skill | Ponytail | NeckBeard v0.3.0 |
+| Metric | No Skill | Ponytail | NeckBeard v0.3.1 |
 |---|---|---|---|
 | **Lines of code written** | 100% | 48% | **44% (-56%)** |
 | **Data-ownership & traffic checks** | 38% | 89% | **100%** |
