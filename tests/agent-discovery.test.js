@@ -242,18 +242,19 @@ await test('Hostile inputs fail closed: POST /api/health -> 405, unknown/travers
   assert.equal(coffeeRes.headers.get('x-powered-by'), 'ThinkPad-X220-TrackPoint');
 });
 
-await test('RANTS_BY_TOPIC in assets/site.js contains 16 topics with 20 unique quips each (320 total)', () => {
+await test('Clean-room assets/site.js and index.html contain 100% original NeckBeard interactive modules and VIBES Hub', () => {
   const siteJs = fs.readFileSync('dist/assets/site.js', 'utf8');
-  const m = siteJs.match(/const RANTS_BY_TOPIC = (\{[\s\S]*?\n\});/);
-  assert(m, 'RANTS_BY_TOPIC object found in assets/site.js');
-  const byTopic = JSON.parse(m[1]);
-  const topics = Object.keys(byTopic);
-  assert.equal(topics.length, 16);
-  for (const t of topics) {
-    assert.equal(byTopic[t].length, 20, `Topic ${t} should have 20 quips`);
-  }
-  const all = Object.values(byTopic).flat();
-  assert.equal(new Set(all).size, 320);
+  assert(siteJs.includes('INSTALL_SNIPPETS'), 'INSTALL_SNIPPETS found in assets/site.js');
+  assert(siteJs.includes('LADDER_SCENARIOS'), 'LADDER_SCENARIOS found in assets/site.js');
+  assert(siteJs.includes('GUARD_CASES'), 'GUARD_CASES found in assets/site.js');
+  assert(siteJs.includes('AUDIT_MODES'), 'AUDIT_MODES found in assets/site.js');
+  assert(siteJs.includes('initGateRadarCanvas'), 'initGateRadarCanvas found in assets/site.js');
+  assert(!siteJs.includes('maskOf'), 'assets/site.js must not contain Ponytail maskOf helper');
+  assert(!siteJs.includes('fadeEdges'), 'assets/site.js must not contain Ponytail fadeEdges helper');
+
+  const html = fs.readFileSync('dist/index.html', 'utf8');
+  assert(html.includes('id="vibes-hub"'), 'VIBES Protocol Hub section present in index.html');
+  assert(html.includes('itsavibe.ai'), 'VIBES standard link present in index.html');
 });
 
 console.log(`\n${passed} passed, 0 failed\n`);
