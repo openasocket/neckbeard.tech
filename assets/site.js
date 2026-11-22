@@ -1528,8 +1528,254 @@
       if (e.target.classList.contains('trackpoint')) return;
       footerLog.classList.add('on');
       const entry = BRIDGE_LOGS[logIdx++ % BRIDGE_LOGS.length];
-      footerLog.textContent = `🧔 3:00 A.M. INCIDENT BRIDGE ARCHIVE (click neckbeard█ again for next entry):\n${entry}`;
+      footerLog.innerHTML = '';
+      const txt = document.createElement('div');
+      txt.textContent = `🧔 3:00 A.M. INCIDENT BRIDGE ARCHIVE (click neckbeard█ again for next entry):\n${entry}`;
+      const doomLaunchBtn = document.createElement('button');
+      doomLaunchBtn.type = 'button';
+      doomLaunchBtn.className = 'doom-btn cheat';
+      doomLaunchBtn.style.marginTop = '10px';
+      doomLaunchBtn.textContent = '🕹️ Launch DOOM.WASM (linuxdoom-1.10 on ThinkPad X220)';
+      doomLaunchBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        launchDoomWasm();
+      });
+      footerLog.append(txt, doomLaunchBtn);
     });
+
+    // Easter Egg 6: Lazy-loaded WebAssembly DOOM (linuxdoom-1.10 + Shareware doom1.wad)
+    let doomModal = null;
+    let doomInstance = null;
+    let doomRunning = false;
+    let doomLoading = false;
+    let doomFps = 0;
+    let doomFramesTotal = 0;
+
+    function doomKeyCode(keyCode, key) {
+      switch (keyCode) {
+        case 8: return 127; // KEY_BACKSPACE
+        case 9: return 9;   // KEY_TAB (Automap)
+        case 13: return 13; // KEY_ENTER
+        case 27: return 27; // KEY_ESCAPE
+        case 32: return 32; // KEY_SPACE (Use / Open door)
+        case 16: return 0x80 + 0x36; // KEY_RSHIFT (Run)
+        case 17: return 0x80 + 0x1d; // KEY_RCTRL (Fire)
+        case 18: return 0x80 + 0x38; // KEY_RALT (Strafe)
+        case 37: return 0xac; // KEY_LEFTARROW
+        case 38: return 0xad; // KEY_UPARROW
+        case 39: return 0xae; // KEY_RIGHTARROW
+        case 40: return 0xaf; // KEY_DOWNARROW
+        default:
+          if (key === 'z' || key === 'Z') return 0x80 + 0x1d; // Z = Fire alias
+          if (key === 'e' || key === 'E') return 32;          // E = Use/Door alias
+          if (keyCode >= 65 && keyCode <= 90) return keyCode + 32; // A-Z -> a-z
+          if (keyCode >= 112 && keyCode <= 123) return keyCode + 75; // F1-F12
+          return keyCode;
+      }
+    }
+
+    function sendDoomKey(code, down) {
+      if (!doomInstance) return;
+      doomInstance.exports.add_browser_event(down ? 0 : 1, code);
+    }
+
+    function sendDoomCheatString(str) {
+      if (!doomInstance) return;
+      [...str.toLowerCase()].forEach((ch, idx) => {
+        const code = ch.charCodeAt(0);
+        setTimeout(() => {
+          sendDoomKey(code, true);
+          setTimeout(() => sendDoomKey(code, false), 28);
+        }, idx * 55);
+      });
+    }
+
+    function closeDoomWasm() {
+      doomRunning = false;
+      if (doomModal) doomModal.hidden = true;
+    }
+
+    async function launchDoomWasm() {
+      if (!doomModal) {
+        doomModal = document.createElement('div');
+        doomModal.className = 'doom-overlay';
+        doomModal.innerHTML = `
+          <div class="doom-win" role="dialog" aria-modal="true" aria-label="DOOM.WASM on ThinkPad X220">
+            <div class="doom-bar">
+              <div class="doom-title"><span class="trackpoint" style="width:10px;height:10px"></span>root@thinkpad-x220:/usr/games/doom.wasm (linuxdoom-1.10)</div>
+              <div class="doom-stats" id="doom-stats">booting wasm32...</div>
+              <button type="button" class="doom-btn cheat" id="doom-iddqd" title="Toggle God Mode (IDDQD)">IDDQD</button>
+              <button type="button" class="doom-btn cheat" id="doom-idkfa" title="Give All Weapons, Ammo & Keys (IDKFA)">IDKFA</button>
+              <button type="button" class="doom-btn close" id="doom-close">✕ Close</button>
+            </div>
+            <div class="doom-stage">
+              <canvas id="doom-screen" width="640" height="400" tabindex="0"></canvas>
+            </div>
+            <div class="doom-hint" id="doom-hint">Controls: <b>Arrow Keys</b> Move/Turn · <b>Ctrl</b> (or <b>Z</b>) Fire · <b>Space</b> (or <b>E</b>) Open Door · <b>Enter</b> Select · <b>Shift</b> Run · <b>1-7</b> Weapons · <b>Tab</b> Map</div>
+            <div class="doom-controls">
+              <div class="doom-pad">
+                <button type="button" class="doom-btn" data-dkey="172">◄ Left</button>
+                <button type="button" class="doom-btn" data-dkey="173">▲ Forward</button>
+                <button type="button" class="doom-btn" data-dkey="175">▼ Back</button>
+                <button type="button" class="doom-btn" data-dkey="174">► Right</button>
+              </div>
+              <div class="doom-pad">
+                <button type="button" class="doom-btn cheat" data-dkey="157">🔥 FIRE (Ctrl)</button>
+                <button type="button" class="doom-btn" data-dkey="32">🚪 USE (Space)</button>
+                <button type="button" class="doom-btn" data-dkey="184">⇄ Strafe</button>
+                <button type="button" class="doom-btn" data-dkey="13">⏎ Enter</button>
+                <button type="button" class="doom-btn" data-dkey="27">☰ Menu (Esc)</button>
+              </div>
+            </div>
+            <div class="doom-log" id="doom-stdout">🧔 Mounting /assets/doom.wasm (108 Wasm pages = 7.0 MB linear memory, 0 npm dependencies)...<br></div>
+          </div>
+        `;
+        document.body.appendChild(doomModal);
+
+        doomModal.addEventListener('click', (e) => {
+          if (e.target === doomModal) closeDoomWasm();
+        });
+        $('#doom-close')?.addEventListener('click', closeDoomWasm);
+        $('#doom-iddqd')?.addEventListener('click', () => {
+          sendDoomCheatString('iddqd');
+          $('#doom-screen')?.focus();
+        });
+        $('#doom-idkfa')?.addEventListener('click', () => {
+          sendDoomCheatString('idkfa');
+          $('#doom-screen')?.focus();
+        });
+
+        const screen = $('#doom-screen');
+        screen.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && e.shiftKey) {
+            closeDoomWasm();
+            return;
+          }
+          sendDoomKey(doomKeyCode(e.keyCode, e.key), true);
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        screen.addEventListener('keyup', (e) => {
+          sendDoomKey(doomKeyCode(e.keyCode, e.key), false);
+          e.preventDefault();
+          e.stopPropagation();
+        });
+
+        $$('[data-dkey]', doomModal).forEach((btn) => {
+          const code = Number(btn.dataset.dkey);
+          const press = (e) => {
+            e.preventDefault();
+            sendDoomKey(code, true);
+            screen.focus();
+          };
+          const release = (e) => {
+            e.preventDefault();
+            sendDoomKey(code, false);
+          };
+          btn.addEventListener('mousedown', press);
+          btn.addEventListener('mouseup', release);
+          btn.addEventListener('mouseleave', release);
+          btn.addEventListener('touchstart', press, { passive: false });
+          btn.addEventListener('touchend', release, { passive: false });
+          btn.addEventListener('touchcancel', release, { passive: false });
+        });
+      }
+
+      doomModal.hidden = false;
+      const screen = $('#doom-screen');
+      const stdout = $('#doom-stdout');
+      const statsEl = $('#doom-stats');
+      screen?.focus();
+
+      if (doomInstance) {
+        if (!doomRunning) {
+          doomRunning = true;
+          const loop = () => {
+            if (!doomRunning) return;
+            doomInstance.exports.doom_loop_step();
+            requestAnimationFrame(loop);
+          };
+          requestAnimationFrame(loop);
+        }
+        return;
+      }
+
+      if (doomLoading) return;
+      doomLoading = true;
+
+      try {
+        const memory = new WebAssembly.Memory({ initial: 108 });
+        const readStr = (offset, length) =>
+          new TextDecoder('utf8').decode(new Uint8Array(memory.buffer, offset, length));
+        const logLine = (prefix) => (offset, length) => {
+          if (!stdout) return;
+          const lines = readStr(offset, length).split('\n').filter(Boolean);
+          for (const l of lines) {
+            const d = document.createElement('div');
+            d.textContent = `${prefix}${l}`;
+            stdout.appendChild(d);
+          }
+          stdout.scrollTop = stdout.scrollHeight;
+        };
+        const ctx2d = screen.getContext('2d');
+        const W_DOOM = 640;
+        const H_DOOM = 400;
+
+        const importObject = {
+          js: {
+            js_console_log: logLine('[wasm] '),
+            js_stdout: logLine(''),
+            js_stderr: logLine('[err] '),
+            js_milliseconds_since_start: () => performance.now(),
+            js_draw_screen: (ptr) => {
+              const buf = new Uint8ClampedArray(memory.buffer, ptr, W_DOOM * H_DOOM * 4);
+              ctx2d.putImageData(new ImageData(buf, W_DOOM, H_DOOM), 0, 0);
+              doomFps++;
+              doomFramesTotal++;
+            },
+          },
+          env: { memory },
+        };
+
+        const resp = await fetch('/assets/doom.wasm');
+        let result;
+        if (WebAssembly.instantiateStreaming) {
+          try {
+            result = await WebAssembly.instantiateStreaming(resp, importObject);
+          } catch {
+            const bytes = await (await fetch('/assets/doom.wasm')).arrayBuffer();
+            result = await WebAssembly.instantiate(bytes, importObject);
+          }
+        } else {
+          const bytes = await resp.arrayBuffer();
+          result = await WebAssembly.instantiate(bytes, importObject);
+        }
+
+        doomInstance = result.instance;
+        doomInstance.exports.main();
+        doomRunning = true;
+        doomLoading = false;
+
+        setInterval(() => {
+          if (doomRunning && statsEl) {
+            statsEl.textContent = `${doomFps} FPS · ${doomFramesTotal} frames · 108 Wasm pages`;
+            doomFps = 0;
+          }
+        }, 1000);
+
+        const step = () => {
+          if (!doomRunning) return;
+          doomInstance.exports.doom_loop_step();
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+        screen.focus();
+        popCameo('🕹️ linuxdoom-1.10 running in 108 pages of linear Wasm memory. Press Enter to start E1M1, or click IDDQD if your aim is as sloppy as an unindexed JOIN.');
+      } catch (err) {
+        doomLoading = false;
+        if (stdout) stdout.textContent = `Failed to initialize doom.wasm: ${err.message}`;
+      }
+    }
 
     // Easter Egg 4: Secret Keyboard Triggers ("sudo", "vibe", "kafka", ":wq", and Konami Code Level-Up Overdrive)
     let keyBuf = '';
@@ -1633,6 +1879,13 @@
         } else if (keyBuf.endsWith(':wq') || keyBuf.endsWith('vim')) {
           keyBuf = '';
           popCameo('🧔 :wq acknowledged. Buffer written cleanly. 0 swap files leaked, 0 mouse clicks required. You may exit the terminal.');
+        } else if (keyBuf.endsWith('doom') || keyBuf.endsWith('iddqd') || keyBuf.endsWith('idkfa')) {
+          const trigger = keyBuf;
+          keyBuf = '';
+          launchDoomWasm().then(() => {
+            if (trigger.endsWith('iddqd')) setTimeout(() => sendDoomCheatString('iddqd'), 600);
+            if (trigger.endsWith('idkfa')) setTimeout(() => sendDoomCheatString('idkfa'), 600);
+          });
         }
       }
     });
@@ -1665,6 +1918,7 @@
       topics: () => Object.keys(RANTS_BY_TOPIC),
       rant: (topic) => { const q = nextRandomRant(topic); popCameo(q); return q; },
       konami: () => triggerKonamiOverdrive(),
+      doom: () => { launchDoomWasm(); return '🕹️ Launching linuxdoom-1.10 (doom.wasm) on ThinkPad X220 framebuffer...'; },
       thinkpad: 'X220 (i7-2640M, 16GB ECC-wishful, TrackPoint cat-tongue cap)',
       audit: () => {
         popCameo('🔍 Console /neckbeard-audit complete: 0 trackers on neckbeard.tech, but your browser has 47 open tabs eating 3.8 GB of RAM.');

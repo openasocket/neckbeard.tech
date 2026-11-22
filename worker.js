@@ -21,7 +21,7 @@
 
 const CSP = [
   "default-src 'none'",
-  "script-src 'self' https://static.cloudflareinsights.com",
+  "script-src 'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
