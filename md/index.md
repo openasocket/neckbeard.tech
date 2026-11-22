@@ -31,7 +31,7 @@ Most people using AI coding agents know what feature they want, not the twenty i
 
 ### Results
 
-| Metric | No Skill | Ponytail | NeckBeard v0.2 |
+| Metric | No Skill | Ponytail | NeckBeard v0.3.0 |
 |---|---|---|---|
 | **Lines of code written** | 100% | 48% | **44% (-56%)** |
 | **Data-ownership & traffic checks** | 38% | 89% | **100%** |

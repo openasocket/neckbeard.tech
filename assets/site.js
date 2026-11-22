@@ -1896,8 +1896,8 @@
       '    | \\ | | ___  ___| | _| __ )  ___  __ _ _ __ __| |',
       '    |  \\| |/ _ \\/ __| |/ /  _ \\ / _ \\/ _` | \'__/ _` |',
       '    | |\\  |  __/ (__|   <| |_) |  __/ (_| | | | (_| |',
-      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.2.0',
-      '%c\n🧔 Inspecting the DOM? Good. 0 tracking pixels, 0 npm runtime dependencies, 0 MB of hydration slush.\nTry running %cneckbeard.audit()%c, %cneckbeard.blame()%c, %cneckbeard.coffee()%c, or %cneckbeard.sudo()%c in this console.',
+      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.3.0',
+      '%c\n🧔 Inspecting the DOM? Good. 0 tracking pixels, 0 npm runtime dependencies, 0 MB of hydration slush.\nTry running %cneckbeard.audit()%c, %cneckbeard.blame()%c, %cneckbeard.coffee()%c, %cneckbeard.konami()%c, %cneckbeard.doom()%c, or %cneckbeard.sudo()%c in this console.',
     ].join('\n');
     console.log(
       banner,
@@ -1909,11 +1909,16 @@
       'color:#c5d1c9;font-family:monospace',
       'color:#38bdf8;font-weight:bold;font-family:monospace',
       'color:#c5d1c9;font-family:monospace',
+      'color:#fde047;font-weight:bold;font-family:monospace',
+      'color:#c5d1c9;font-family:monospace',
+      'color:#f43f5e;font-weight:bold;font-family:monospace',
+      'color:#c5d1c9;font-family:monospace',
       'color:#f59e0b;font-weight:bold;font-family:monospace',
       'color:#c5d1c9;font-family:monospace'
     );
     window.neckbeard = {
-      version: '0.2.0',
+      version: '0.3.0',
+      releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.3.0',
       totalRants: RANTS.length,
       topics: () => Object.keys(RANTS_BY_TOPIC),
       rant: (topic) => { const q = nextRandomRant(topic); popCameo(q); return q; },
@@ -1945,5 +1950,25 @@
         return { ok: false, blockedBy: 'hooks/guard.js', latencyMs: 0.1 };
       },
     };
+
+    // Dynamic latest release sync (queries edge-cached /api/version so the site always reflects the latest GitHub release tag)
+    (async () => {
+      try {
+        const res = await fetch('/api/version', { headers: { Accept: 'application/json' } });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || !/^\d+\.\d+\.\d+/.test(data.version)) return;
+        const tag = data.tag || `v${data.version}`;
+        const url = data.releaseUrl || `https://github.com/openasocket/NeckBeard/releases/tag/${tag}`;
+        $$('[data-nb-version]').forEach((el) => {
+          el.textContent = tag;
+        });
+        $$('[data-nb-release-link]').forEach((el) => {
+          el.setAttribute('href', url);
+        });
+        window.neckbeard.version = data.version;
+        window.neckbeard.releaseUrl = url;
+      } catch {}
+    })();
   });
 })();

@@ -5,6 +5,33 @@ set -e
 rm -rf dist
 mkdir -p dist
 
+# Auto-detect latest NeckBeard release tag from ../NeckBeard git tags (if present) and sync static baseline
+LATEST_TAG=$(git -C ../NeckBeard tag --sort=-v:refname 2>/dev/null | head -n 1 || true)
+LATEST_VER="${LATEST_TAG#v}"
+if [[ "$LATEST_VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  VER="$LATEST_VER" node -e '
+  const fs = require("fs");
+  const ver = process.env.VER;
+  const tag = "v" + ver;
+  for (const jf of ["package.json", "index.json", "openapi.json"]) {
+    const raw = fs.readFileSync(jf, "utf8");
+    const updated = raw.replace(/"version":\s*"[0-9]+\.[0-9]+\.[0-9]+"/, `"version": "${ver}"`);
+    if (updated !== raw) fs.writeFileSync(jf, updated);
+  }
+  for (const tf of ["index.html", "md/index.md", "worker.js", "assets/site.js"]) {
+    let raw = fs.readFileSync(tf, "utf8");
+    let updated = raw
+      .replace(/FALLBACK_VERSION = '\''[0-9]+\.[0-9]+\.[0-9]+'\''/g, `FALLBACK_VERSION = '\''${ver}'\''`)
+      .replace(/releases\/tag\/v[0-9]+\.[0-9]+\.[0-9]+/g, `releases/tag/${tag}`)
+      .replace(/data-nb-version>v[0-9]+(?:\.[0-9]+){1,2}</g, `data-nb-version>${tag}<`)
+      .replace(/NeckBeard v[0-9]+(?:\.[0-9]+){1,2}/g, `NeckBeard ${tag}`)
+      .replace(/  v[0-9]+\.[0-9]+\.[0-9]+'\''/g, `  ${tag}'\''`)
+      .replace(/version: '\''[0-9]+\.[0-9]+\.[0-9]+'\''/g, `version: '\''${ver}'\''`);
+    if (updated !== raw) fs.writeFileSync(tf, updated);
+  }
+  '
+fi
+
 # Recompute SHA-256 digests in .well-known/agent-skills/index.json so it always matches SKILL.md bytes
 node -e '
 const fs = require("fs");

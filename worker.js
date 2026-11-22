@@ -39,6 +39,114 @@ const SKILLS = [
   'neckbeard-gain'
 ];
 
+const FALLBACK_VERSION = '0.3.0';
+const SEMVER_RE = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
+let cachedRelease = {
+  version: FALLBACK_VERSION,
+  tag: `v${FALLBACK_VERSION}`,
+  releaseUrl: `https://github.com/openasocket/NeckBeard/releases/tag/v${FALLBACK_VERSION}`,
+  expiresAt: 0
+};
+
+function compareSemver(a, b) {
+  const pa = String(a).replace(/^v/i, '').split(/[.-]/).map((x) => (Number.isNaN(Number(x)) ? x : Number(x)));
+  const pb = String(b).replace(/^v/i, '').split(/[.-]/).map((x) => (Number.isNaN(Number(x)) ? x : Number(x)));
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const va = pa[i] ?? 0;
+    const vb = pb[i] ?? 0;
+    if (va === vb) continue;
+    return va > vb ? 1 : -1;
+  }
+  return 0;
+}
+
+async function resolveLatestRelease() {
+  const now = Date.now();
+  if (now < cachedRelease.expiresAt) return cachedRelease;
+
+  // In offline/unit-test environments without Cloudflare edge cache, return fast unless online fetch succeeds quickly
+  const edgeCache = typeof caches !== 'undefined' && caches.default ? caches.default : null;
+  const cacheKey = new Request('https://neckbeard.tech/__internal/latest-release');
+  if (edgeCache) {
+    try {
+      const hit = await edgeCache.match(cacheKey);
+      if (hit) {
+        const data = await hit.json();
+        if (data && SEMVER_RE.test(data.version)) {
+          cachedRelease = { ...data, expiresAt: now + 300_000 };
+          return cachedRelease;
+        }
+      }
+    } catch {}
+  } else {
+    // Unit test / local non-edge environment: avoid external network calls during unit tests
+    cachedRelease.expiresAt = now + 60_000;
+    return cachedRelease;
+  }
+
+  let bestVer = FALLBACK_VERSION;
+  const headers = {
+    'Accept': 'application/vnd.github+json',
+    'User-Agent': 'neckbeard.tech-cloudflare-worker'
+  };
+
+  try {
+    const [relRes, tagRes] = await Promise.allSettled([
+      fetch('https://api.github.com/repos/openasocket/NeckBeard/releases/latest', { headers }),
+      fetch('https://api.github.com/repos/openasocket/NeckBeard/tags?per_page=5', { headers })
+    ]);
+
+    if (relRes.status === 'fulfilled' && relRes.value.ok) {
+      const relJson = await relRes.value.json();
+      const candidate = String(relJson?.tag_name || '').replace(/^v/i, '');
+      if (SEMVER_RE.test(candidate) && compareSemver(candidate, bestVer) > 0) {
+        bestVer = candidate;
+      }
+    }
+    if (tagRes.status === 'fulfilled' && tagRes.value.ok) {
+      const tagsJson = await tagRes.value.json();
+      if (Array.isArray(tagsJson)) {
+        for (const t of tagsJson) {
+          const candidate = String(t?.name || '').replace(/^v/i, '');
+          if (SEMVER_RE.test(candidate) && compareSemver(candidate, bestVer) > 0) {
+            bestVer = candidate;
+          }
+        }
+      }
+    }
+  } catch {}
+
+  const resolved = {
+    version: bestVer,
+    tag: `v${bestVer}`,
+    releaseUrl: `https://github.com/openasocket/NeckBeard/releases/tag/v${bestVer}`,
+    expiresAt: now + 300_000
+  };
+  cachedRelease = resolved;
+
+  if (edgeCache) {
+    try {
+      await edgeCache.put(
+        cacheKey,
+        new Response(JSON.stringify(resolved), {
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' }
+        })
+      );
+    } catch {}
+  }
+  return resolved;
+}
+
+function applyDynamicVersion(text, rel) {
+  if (!rel || !SEMVER_RE.test(rel.version) || rel.version === FALLBACK_VERSION) return text;
+  return text
+    .replaceAll(`releases/tag/v${FALLBACK_VERSION}`, `releases/tag/${rel.tag}`)
+    .replaceAll(`Release v${FALLBACK_VERSION}`, `Release ${rel.tag}`)
+    .replaceAll(`NeckBeard v${FALLBACK_VERSION}`, `NeckBeard ${rel.tag}`)
+    .replaceAll(`"version": "${FALLBACK_VERSION}"`, `"version": "${rel.version}"`)
+    .replaceAll(`data-nb-version>v${FALLBACK_VERSION}<`, `data-nb-version>${rel.tag}<`);
+}
+
 // Standalone normative .md files at root that must be served directly (not rewritten to /md/index.md)
 const ROOT_NORMATIVE_MD = new Set([
   '/agents.md',
@@ -111,7 +219,7 @@ export function withSecurityHeaders(res, requestUrl = 'https://neckbeard.tech/')
   return out;
 }
 
-export function handleHealth(request) {
+export function handleHealth(request, rel = cachedRelease) {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -132,11 +240,14 @@ export function handleHealth(request) {
       }
     });
   }
+  const activeRel = rel && SEMVER_RE.test(rel.version) ? rel : cachedRelease;
   const body = JSON.stringify({
     ok: true,
     service: 'neckbeard.tech',
     project: 'NeckBeard',
-    version: '0.2.0',
+    version: activeRel.version,
+    tag: activeRel.tag,
+    releaseUrl: activeRel.releaseUrl,
     skills: SKILLS
   });
   return new Response(request.method === 'HEAD' ? null : body, {
@@ -196,8 +307,9 @@ export default {
     const url = new URL(request.url);
     const { pathname } = url;
 
-    if (pathname === '/api/health') {
-      return withSecurityHeaders(handleHealth(request), request.url);
+    if (pathname === '/api/health' || pathname === '/api/version') {
+      const rel = await resolveLatestRelease();
+      return withSecurityHeaders(handleHealth(request, rel), request.url);
     }
 
     // RFC 2324 / HTCPCP Easter egg endpoint for curious engineers & agents
@@ -247,7 +359,8 @@ export default {
         });
         const assetRes = await env.ASSETS.fetch(assetReq);
         if (assetRes.ok) {
-          const text = await assetRes.text();
+          const rel = await resolveLatestRelease();
+          const text = applyDynamicVersion(await assetRes.text(), rel);
           const approxTokens = Math.max(1, Math.ceil(text.length / 4));
           const headers = new Headers(assetRes.headers);
           headers.set('Content-Type', 'text/markdown; charset=utf-8');
@@ -289,7 +402,20 @@ export default {
         ? request
         : new Request(new URL(fetchPathname, url), { method: request.method, headers: request.headers });
     const res = await env.ASSETS.fetch(assetReq);
-    const out = new Response(res.body, res);
+    let out = new Response(res.body, res);
+
+    const contentType = out.headers.get('content-type') || '';
+    if (
+      out.ok &&
+      request.method === 'GET' &&
+      (contentType.includes('text/html') || fetchPathname === '/index.json' || fetchPathname === '/openapi.json')
+    ) {
+      const rel = await resolveLatestRelease();
+      if (rel.version !== FALLBACK_VERSION) {
+        const rewritten = applyDynamicVersion(await out.text(), rel);
+        out = new Response(rewritten, out);
+      }
+    }
 
     const extraHeaders = discoveryHeadersFor(fetchPathname);
     if (extraHeaders && (out.ok || out.status === 304)) {
@@ -298,7 +424,6 @@ export default {
       }
     }
 
-    const contentType = out.headers.get('content-type') || '';
     const mdAsset = markdownAssetFor(pathname);
     if (mdAsset && contentType.includes('text/html')) {
       out.headers.set('Vary', 'Accept');
