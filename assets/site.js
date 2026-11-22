@@ -239,6 +239,7 @@
     }
 
     function frame(t) {
+      if (!ctx) return;
       const row = Math.floor(t * 1.1);
       if (row !== bgRow) drawBg(row);
       ctx.clearRect(0, 0, W, H);
