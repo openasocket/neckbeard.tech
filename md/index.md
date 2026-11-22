@@ -134,8 +134,30 @@ Then it walks through six steps and takes the first one that passes **Safe · Fa
 
 ---
 
-## 08. Install in Two Lines & Command Guide
+## 08. Install: Two Lines for One Agent, or One Script for All of Them
 
+- **Universal Multi-Agent Auto-Installer & Updater (`scripts/install-all.js`, macOS / Linux / Windows):**
+  ```bash
+  git clone https://github.com/openasocket/NeckBeard.git && cd NeckBeard
+  node scripts/install-all.js
+  # Flags: --dry-run (preview detected agents), --keep-ponytail, --json
+  ```
+  Sample output:
+  ```text
+  NeckBeard Multi-Harness Installer & Updater (v0.3.0 · darwin (arm64))
+  ──────────────────────────────────────────────────────────────────────────────────────
+    ✓ Claude Code          : CLI updated · cache synced -> v0.3.0
+    ✓ OpenAI Codex         : cache synced -> v0.3.0 · disabled ponytail@ponytail collision
+    ✓ Grok CLI             : synced neckbeard -> v0.3.0 · enabled in config.toml
+    ✓ Antigravity CLI      : synced ~/.gemini/config/plugins/neckbeard -> v0.3.0
+    ✓ Gemini CLI           : synced ~/.gemini/extensions/neckbeard -> v0.3.0
+    ○ GitHub Copilot CLI   : skipped (not installed)
+    ○ Pi / Oh My Pi        : skipped (not installed)
+    ○ OpenCode / Kilo      : skipped (not installed)
+  ──────────────────────────────────────────────────────────────────────────────────────
+    Harnesses updated : 5 / 8 compatible agent harnesses detected
+    Command Center    : ~/.config/neckbeard/telemetry/dashboard.html
+  ```
 - **Claude Code:** `claude plugin marketplace add openasocket/NeckBeard && claude plugin install neckbeard@neckbeard`
 - **Codex:** `codex plugin marketplace add openasocket/NeckBeard && codex plugin add neckbeard@neckbeard`
 - **GitHub Copilot CLI:** `copilot plugin marketplace add openasocket/NeckBeard && copilot plugin install neckbeard@neckbeard`

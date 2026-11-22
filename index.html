@@ -413,6 +413,17 @@
   .cmd pre .p { color: var(--faint); user-select: none; }
   .copy { font: 600 12.5px var(--mono); color: var(--emerald); background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; cursor: pointer; padding: 6px 12px; margin-left: auto; white-space: nowrap; }
   .copy:hover { background: rgba(34, 197, 94, 0.2); }
+  .install-script-card { margin-top: 28px; border: 1px solid var(--line-strong); border-radius: 16px; background: rgba(11, 16, 13, 0.78); padding: 22px 24px; }
+  .install-script-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .install-script-head h3 { margin: 0; font: 700 16px var(--mono); color: var(--ink); }
+  .install-script-head span { font: 600 11.5px var(--mono); color: var(--emerald); background: rgba(34, 197, 94, 0.12); padding: 3px 10px; border-radius: 999px; }
+  .install-script-card p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--soft); }
+  .install-out { margin: 14px 0 0; padding: 16px 18px; border-radius: 12px; background: #050706; border: 1px solid var(--line); font: 400 12.5px/1.6 var(--mono); color: var(--soft); overflow-x: auto; white-space: pre; }
+  .install-out .ok { color: var(--emerald); font-weight: 700; }
+  .install-out .skip { color: var(--faint); }
+  .install-out .hl { color: var(--ink); font-weight: 700; }
+  .install-flags { display: flex; gap: 10px 18px; flex-wrap: wrap; margin-top: 12px; font: 400 12.5px var(--mono); color: var(--muted); }
+  .install-flags code { color: #74f0a0; background: rgba(34, 197, 94, 0.1); padding: 2px 6px; border-radius: 5px; }
   .cmds { display: grid; grid-template-columns: max-content 1fr; gap: 12px 36px; margin: 46px 0 0; }
   .cmds dt { font-family: var(--mono); font-size: 13.5px; color: var(--emerald); }
   .cmds dd { margin: 0; color: var(--muted); font-size: 14.5px; }
@@ -933,8 +944,8 @@ export const REGION = "us-east-1";</pre>
 <section id="install" class="sec sec-deferred"><div class="wrap"><div class="in">
   <div class="sh"><span class="no holo">08</span>Install</div>
   <div>
-    <h2 class="decode">Two lines to install.<br><em>Works out of the box.</em></h2>
-    <p class="lead">Pick your AI coding tool below. Once installed, NeckBeard automatically protects your sessions—no configuration files or setup wizard required:</p>
+    <h2 class="decode">Two lines for one agent.<br><em>Or one script for all of them.</em></h2>
+    <p class="lead">Install directly into a single AI coding tool in two lines, or run the cross-platform auto-installer script (<code>scripts/install-all.js</code>) to detect and update every compatible agent on your machine at once:</p>
     <div class="switch tabs" role="tablist" aria-label="Agent Harness">
       <button role="tab" aria-selected="true" data-t="cc">Claude Code</button>
       <button role="tab" aria-selected="false" data-t="codex">Codex</button>
@@ -944,6 +955,7 @@ export const REGION = "us-east-1";</pre>
       <button role="tab" aria-selected="false" data-t="gemini">Gemini CLI</button>
       <button role="tab" aria-selected="false" data-t="pi">Pi / Oh My Pi</button>
       <button role="tab" aria-selected="false" data-t="opencode">OpenCode / Kilo</button>
+      <button role="tab" aria-selected="false" data-t="all">All Agents (Auto-Script)</button>
     </div>
     <div class="cmd" data-p="cc"><pre><span class="p">$ </span>claude plugin marketplace add openasocket/NeckBeard
 <span class="p">$ </span>claude plugin install neckbeard@neckbeard</pre><button class="copy" type="button">copy</button></div>
@@ -957,8 +969,40 @@ export const REGION = "us-east-1";</pre>
     <div class="cmd" data-p="pi" hidden><pre><span class="p">$ </span>pi install git:github.com/openasocket/NeckBeard</pre><button class="copy" type="button">copy</button></div>
     <div class="cmd" data-p="opencode" hidden><pre><span class="p">// opencode.json or kilo.jsonc:</span>
 { "plugins": ["github:openasocket/NeckBeard"] }</pre><button class="copy" type="button">copy</button></div>
+    <div class="cmd" data-p="all" hidden><pre><span class="p">$ </span>git clone https://github.com/openasocket/NeckBeard.git &amp;&amp; cd NeckBeard
+<span class="p">$ </span>node scripts/install-all.js</pre><button class="copy" type="button">copy</button></div>
 
-    <p class="fine">Using Cursor, Windsurf, Kiro, Cline, Zed, or another tool? Drop <a href="https://neckbeard.tech/AGENTS.md">AGENTS.md</a> into your project folder or see <a href="https://neckbeard.tech/INSTALL.md">INSTALL.md</a>.</p>
+    <!-- Universal Multi-Harness Auto-Installer & Output Card -->
+    <div class="install-script-card">
+      <div class="install-script-head">
+        <h3>Universal Multi-Agent Auto-Installer &amp; Updater (<code>scripts/install-all.js</code>)</h3>
+        <span>macOS · Linux · Windows · Zero Dependencies</span>
+      </div>
+      <p>Have more than one AI coding tool installed? Clone the repo and run <code>node scripts/install-all.js</code> (or <code>npm run sync</code>). It automatically detects every compatible agent harness on your machine, installs or updates NeckBeard to <strong data-nb-version>v0.3.0</strong>, resolves legacy plugin collisions, and builds your local Command Center dashboard:</p>
+      <div class="cmd" style="margin-top:14px"><pre id="snip-install-all" data-raw="git clone https://github.com/openasocket/NeckBeard.git && cd NeckBeard
+node scripts/install-all.js"><span class="p">$ </span>git clone https://github.com/openasocket/NeckBeard.git &amp;&amp; cd NeckBeard
+<span class="p">$ </span>node scripts/install-all.js</pre><button class="copy" type="button" data-copy-target="snip-install-all">copy</button></div>
+      <pre class="install-out" aria-label="Sample output of node scripts/install-all.js"><span class="hl">NeckBeard Multi-Harness Installer &amp; Updater (<span data-nb-version>v0.3.0</span> · darwin (arm64))</span>
+──────────────────────────────────────────────────────────────────────────────────────
+  <span class="ok">✓</span> <span class="hl">Claude Code         </span> : CLI updated · cache synced -&gt; <span data-nb-version>v0.3.0</span>
+  <span class="ok">✓</span> <span class="hl">OpenAI Codex        </span> : cache synced -&gt; <span data-nb-version>v0.3.0</span> · disabled ponytail@ponytail collision
+  <span class="ok">✓</span> <span class="hl">Grok CLI            </span> : synced neckbeard -&gt; <span data-nb-version>v0.3.0</span> · enabled in config.toml
+  <span class="ok">✓</span> <span class="hl">Antigravity CLI     </span> : synced ~/.gemini/config/plugins/neckbeard -&gt; <span data-nb-version>v0.3.0</span>
+  <span class="ok">✓</span> <span class="hl">Gemini CLI          </span> : synced ~/.gemini/extensions/neckbeard -&gt; <span data-nb-version>v0.3.0</span>
+  <span class="skip">○ GitHub Copilot CLI   : skipped (not installed)</span>
+  <span class="skip">○ Pi / Oh My Pi        : skipped (not installed)</span>
+  <span class="skip">○ OpenCode / Kilo      : skipped (not installed)</span>
+──────────────────────────────────────────────────────────────────────────────────────
+  <span class="hl">Harnesses updated</span> : <span class="ok">5 / 8 compatible agent harnesses detected</span>
+  <span class="hl">Command Center   </span> : ~/.config/neckbeard/telemetry/dashboard.html</pre>
+      <div class="install-flags">
+        <span><code>--dry-run</code> preview detected agents without changes</span>
+        <span><code>--keep-ponytail</code> keep ponytail enabled alongside NeckBeard</span>
+        <span><code>--json</code> machine-readable JSON report</span>
+      </div>
+    </div>
+
+    <p class="fine" style="margin-top:20px">Using Cursor, Windsurf, Kiro, Cline, Zed, or another tool? Drop <a href="https://neckbeard.tech/AGENTS.md">AGENTS.md</a> into your project folder or see <a href="https://neckbeard.tech/INSTALL.md">INSTALL.md</a>.</p>
 
     <dl class="cmds">
       <dt>/neckbeard map</dt><dd>automatically scan (or refresh) your project's risk map in <code>.neckbeard.json</code>—showing where requests enter, where outside APIs are called, and where logins, database queries, or shell commands happen</dd>
