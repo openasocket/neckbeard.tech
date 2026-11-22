@@ -208,8 +208,8 @@ Related: `/neckbeard-review` for a change, `/neckbeard-audit` for a repo, and `/
 ---
 name: neckbeard-review
 description: >
-  Review a change for correctness, the trust boundary, speed and scale at the
-  named load, whether internal complexity is hidden behind a simple user
+  Review a change for correctness, the trust boundary, right-sized speed and scale for
+  real traffic, whether internal complexity is hidden behind a simple user
   experience, and whether the change is finished. Use for "review this",
   "security review", "review my PR", "review the last commit", or
   /neckbeard-review. Reports only; changes no code.
