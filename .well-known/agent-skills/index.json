@@ -4,23 +4,23 @@
     {
       "name": "neckbeard",
       "type": "skill-md",
-      "description": "The smallest change that is correct, safe at the trust boundary it crosses, fast and scalable at a named load, simple for the end user, and finishes the paths it creates. Levels: lite, full (default), paranoid, off.",
+      "description": "The smallest change that is correct, safe at the trust boundary it crosses, built and right-sized for real traffic, simple for the end user, and finishes the paths it creates. Levels: lite, full (default), paranoid, off.",
       "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard/SKILL.md",
-      "digest": "sha256:ef6e993809261c8abb0571026e04fcc8c150b57a1410875bf039e5575a87fd2d"
+      "digest": "sha256:4f55acd187c67b8004d1c32c72ce7a2fa9a60a1c55477b95412d5a7a4181bf13"
     },
     {
       "name": "neckbeard-review",
       "type": "skill-md",
-      "description": "Review a change for correctness, the trust boundary, speed and scale at the named load, whether internal complexity is hidden behind a simple user experience, and whether the change is finished. Supports --ci JSON gate mode.",
+      "description": "Review a change for correctness, the trust boundary, right-sized speed and scale for real traffic, whether internal complexity is hidden behind a simple user experience, and whether the change is finished. Supports --ci JSON gate mode.",
       "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-review/SKILL.md",
-      "digest": "sha256:c4f784337bfa20c3650abb318f123349b5254bcb49827f729da93ea03d2c3d5c"
+      "digest": "sha256:52a4d3713eb76650829ece328e045f0f542debcf8a22fba83b5b1d35d7b88756"
     },
     {
       "name": "neckbeard-audit",
       "type": "skill-md",
-      "description": "Audit a repository or folder for the Safe, Fast at the named load, and Done gates starting at entry points. Modes: lite (targeted execution flows and major data/trust boundaries) or complete (every code, config, and doc file).",
+      "description": "Audit a repository or folder for the Safe, Built for real traffic, and Done gates starting at entry points. Modes: lite (targeted execution flows and major data/trust boundaries) or complete (every code, config, and doc file).",
       "url": "https://neckbeard.tech/.well-known/agent-skills/neckbeard-audit/SKILL.md",
-      "digest": "sha256:80f647cc0567b410f65f4dcc3b32f673a0081aecaa28a7801d0b6c71d337d731"
+      "digest": "sha256:d8e8d0b203639146d22ddbb5dfda1538230d14e11b6f97c93bb6e6acee6cfb42"
     },
     {
       "name": "neckbeard-debt",

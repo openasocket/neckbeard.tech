@@ -13,7 +13,7 @@
   "levels": ["lite", "full", "paranoid", "off"],
   "level_aliases": { "ultra": "paranoid" },
   "default_level": "full",
-  "gates": ["Safe", "Fast and scalable at the named number", "Done"],
+  "gates": ["Safe", "Built for real traffic (right-sized scale)", "Done"],
   "skills": [
     {
       "id": "neckbeard",

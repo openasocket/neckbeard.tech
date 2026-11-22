@@ -17,11 +17,11 @@ Review a change against the gates in `skills/neckbeard/SKILL.md` without restati
 
 1. **Scope.** Review what the user names, or the uncommitted changes, or the last commit.
 2. **Context.** Read the diff and the callers, callees, and tests it connects to. If `.neckbeard.json` exists, compare the diff against its `boundaries` map and flag any unreviewed trust-boundary expansion (`+new` external ingress/egress/supply or internal auth/data/exec/ai sinks) for explicit gate verification. If `.ai-audit/` (VIBES protocol) exists, check high-risk PRISM annotations (`risk_score >= 0.60` in `.ai-audit/annotations.jsonl`) on changed files, and flag any direct edit or deletion of immutable `.ai-audit/` provenance artifacts (`manifest.json`, `annotations.jsonl`, `blobs/`, `attestations/`, `incidents/`, `evidence/`) as **Must fix**.
-3. **Gates.** Read the three gates (`Safe`, `Fast and scalable at the named number`, `Done`), the question ladder, and the accepted-risk rules from `skills/neckbeard/SKILL.md` rather than copying them. Say the load you assumed.
+3. **Gates.** Read the three gates (`Safe`, `Built for real traffic (right-sized scale)`, `Done`), the question ladder, and the accepted-risk rules from `skills/neckbeard/SKILL.md` rather than copying them. Say the load you assumed.
 4. **Prove every finding.** A finding needs a concrete case:
    - **Security:** who sends what and what they get.
    - **Correctness or UX failure:** this input or action, this wrong result or leaked internal error.
-   - **Performance or scale:** this input size or concurrency at the named load, this bottleneck or race.
+   - **Performance or scale:** this input size or concurrency at your expected traffic target, this bottleneck or race.
    No case, no finding. Confirm the check is really missing, including middleware and framework defaults.
 5. **Accepted risk.** A `risk:` comment that names its limit is a decision, not a finding, unless it illegally defers a trust check or data-loss write, or the current load already crosses it.
 6. **Variant search.** For every **Must fix** finding, search the repo for the same pattern elsewhere and list any variants under that finding.
@@ -37,7 +37,7 @@ Start with:
 - `Load assumed:` on one line.
 
 Number findings across three groups only (no other severity taxonomy or vulnerability IDs):
-- **Must fix:** exploitable hole, data loss, wrong result on a normal path, or a Fast rule broken at the named load. A Fast miss belongs in one group only, Must fix, and only when it breaks the named load.
+- **Must fix:** exploitable hole, data loss, wrong result on a normal path, or a Fast rule broken at your expected traffic target. A Fast miss belongs in one group only, Must fix, and only when it breaks your expected traffic target.
 - **Should fix:** a gate with no test, a failure path that drops data or leaks raw internals to the user, a duplicate source of truth, or internal complexity pushed onto the end user or caller.
 - **Nice to have:** the ladder, not a gate—dead code to delete, an existing repo helper to reuse by path, near-copies to merge, a new abstraction, or a knob nobody asked for.
 

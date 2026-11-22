@@ -1,6 +1,6 @@
 # NeckBeard — The Principal Engineer for Your AI Coding Agent (neckbeard.tech)
 
-> Smallest change that is correct, safe at the trust boundary it crosses, fast and scalable at a named load, simple for the end user, and finishes the paths it creates. Inspired by Ponytail (`Lean is this ladder, not a fourth gate`), hardened for the 3 a.m. incident bridge, and natively compatible with the VIBES AI assurance standard (`itsavibe.ai`).
+> Smallest change that is correct, safe at the trust boundary it crosses, built and right-sized for real traffic, simple for the end user, and finishes the paths it creates. Inspired by Ponytail (`Lean is this ladder, not a fourth gate`), hardened for the 3 a.m. incident bridge, and natively compatible with the VIBES AI assurance standard (`itsavibe.ai`).
 
 Every public page on `neckbeard.tech` is available as Markdown: request `/` with `Accept: text/markdown`, fetch `/index.md` (or `/md/index.md`), or load the normative Agent Skills Discovery v0.2.0 files below.
 

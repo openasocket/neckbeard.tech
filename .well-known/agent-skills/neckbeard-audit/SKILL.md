@@ -2,7 +2,7 @@
 name: neckbeard-audit
 description: >
   Audit a repo or folder for the same three gates as neckbeard-review (Safe,
-  Fast at the named load, Done), starting at entry points. Lean is the ladder,
+  Built for real traffic, Done), starting at entry points. Lean is the ladder,
   not a gate. Modes: lite (default — targeted execution flows and major
   internal/external data & trust boundaries) or complete (exhaustive audit of
   every single code, config, and documentation file). Use for "audit this repo",
@@ -32,13 +32,13 @@ Audit a repository or folder against the gates in `skills/neckbeard/SKILL.md` wi
 
 ## 2. Look for
 
-Look for breaks in the three gates from `skills/neckbeard/SKILL.md`: Safe, Fast and scalable at the named number, Done. Also check:
+Look for breaks in the three gates from `skills/neckbeard/SKILL.md`: Safe, Built for real traffic (right-sized scale), Done. Also check:
 
 - **Broken doc promises and stale agent instructions:** when a doc promises a security property, check, or guarantee the code lacks, report the code gap as a finding (never edit the doc to describe the bug); when an agent instruction file (`AGENTS.md`, `CLAUDE.md`, Copilot instructions) points at missing commands, wrong paths, or unsafe rules, report it.
 - **Permissions, CI, privacy, and AI boundaries:** credentials, cloud roles, or MCP tools granted broader permissions than they use; CI workflows running untrusted pull-request code with secrets; personal data in logs, URLs, or error reports; untrusted content or retrieved data reaching a model's context or tools without separation.
 - **Supply chain:** no lockfile, an install script, or a dependency nothing imports. Do not add a package-reputation investigation. Run an ecosystem audit command only when that command is already installed. Never install a tool to audit.
 - **VIBES provenance (`.ai-audit/`, when present):** prioritize files with High/Critical PRISM `risk_score` (`>= 0.60` in `.ai-audit/annotations.jsonl`), verify immutable `.ai-audit/` artifacts (`manifest.json`, `annotations.jsonl`, `blobs/`, `attestations/`, `incidents/`, `evidence/`) were not hand-edited, and run `vibecheck validate` or `vibetrace scan` only when already installed on `PATH` (never install a tool to audit).
-- **Lean is the ladder, not a fourth gate:** dead code, an unused dependency, a new abstraction, or a knob nobody asked for goes under Nice to have. A Fast miss is Must fix only when it breaks the named load.
+- **Lean is the ladder, not a fourth gate:** dead code, an unused dependency, a new abstraction, or a knob nobody asked for goes under Nice to have. A Fast miss is Must fix only when it breaks your expected traffic target.
 
 ## 3. Prove it and search for variants (No Artificial Cap)
 

@@ -6,10 +6,10 @@ You are an AI coding agent. Load only what you need. Every URL below is absolute
 
 **NeckBeard** (`https://neckbeard.tech` · `https://github.com/openasocket/NeckBeard`) puts a graybeard principal engineer inside your AI coding agent:
 - **Smallest change that passes the gates:** Keeps [Ponytail](https://ponytail.dev)'s 6-rung minimalist question ladder (`Lean is this ladder, not a fourth gate`) so agents write ~56% less code.
-- **Four framing questions before writing:** (1) Blast radius & callers, (2) Self-derived internal/external trust boundary from `.neckbeard.json` (siding toward a fail-closed conclusion instead of pausing to ask), (3) Persistent named load as a number from `.neckbeard.json`, (4) How to hide necessary complexity inside the module so the user sees zero extra knobs.
+- **Four framing questions before writing:** (1) Blast radius & callers, (2) Self-derived internal/external trust boundary from `.neckbeard.json` (siding toward a fail-closed conclusion instead of pausing to ask), (3) Persistent expected traffic target from `.neckbeard.json`, (4) How to hide necessary complexity inside the module so the user sees zero extra knobs.
 - **Three hard gates:**
   1. **Safe:** Parse untrusted input once at the edge; fail closed; verify the user owns the record on the server every time (never check only that a user is signed in).
-  2. **Fast and scalable at the named number:** Input limits, idempotent retries, no check-then-write races, no N+1 queries, no unbounded growth, no blocking or quadratic work at the named load.
+  2. **Built for real traffic (right-sized scale):** Input limits, idempotent retries, no check-then-write races, no N+1 queries, no unbounded growth, no blocking or quadratic work at your expected traffic target.
   3. **Done:** Update every caller, test, and fixture; handle retry/security/validation complexity inside behind safe defaults; clean failure paths; leave 1 hostile-input test that fails when the risky check is removed.
 
 ## Agent Skills Discovery (v0.2.0)

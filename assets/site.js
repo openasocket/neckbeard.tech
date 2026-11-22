@@ -420,7 +420,7 @@
     const num = $('#cl-n');
     const label = $('#cl-l');
     const KEEP = [
-      '// neckbeard: parse at edge, authorize object on server, cap at named load (250 rps)',
+      '// neckbeard: parse at edge, authorize object on server, right-sized for real traffic (250 rps)',
       'app.get("/api/invoices/:id", requireAuth, async (req, res) => {',
       '  const id = String(req.params.id || "").trim();',
       '  if (!UUID_RE.test(id)) return res.status(400).json({ error: "Invalid invoice id" });',
@@ -1311,8 +1311,8 @@
     "⚡ [PERFORMANCE] Using CSS filter: blur(80px) on 15 overlapping full-screen animated divs turns every laptop GPU into a jet engine.",
     "⚡ [PERFORMANCE] Prematurely micro-optimizing a 10-element array loop with bit shifts while your endpoint makes 14 sequential unindexed database queries.",
     "⚡ [PERFORMANCE] Not setting Cache-Control headers on immutable fingerprinted assets forces returning visitors to re-download 3 MB of static files on every page navigation.",
-    "⚡ [PERFORMANCE] Naming the load as a number in .neckbeard.json stops both diseases: no O(N²) loops that break at your named load, and no imaginary planet-scale complexity for 100x your load.",
-    "⚡ [PERFORMANCE] Fast at the named number means: bounded inputs, idempotent retries, zero check-then-write races, zero N+1 queries, and zero lists that only grow."
+    "⚡ [PERFORMANCE] Saving your expected traffic target in .neckbeard.json stops both diseases: no O(N²) loops that break under your real traffic, and no imaginary planet-scale complexity for 100x your load.",
+    "⚡ [PERFORMANCE] Built for real traffic means: bounded inputs, idempotent retries, zero check-then-write races, zero N+1 queries, and zero lists that only grow."
   ]
 };
   const RANTS = Object.values(RANTS_BY_TOPIC).flat();

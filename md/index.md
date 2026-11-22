@@ -54,7 +54,7 @@ Most people using AI coding agents know what feature they want, not the twenty i
 Say you ask your agent: *"Add an endpoint to download an invoice."* A normal agent checks that a user is logged in, forgets to check that the invoice actually belongs to them (so anyone can view anyone else's bill), forgets to cap the database query, and dumps raw database errors to the screen. NeckBeard collapses 312 bloated lines into 11 safe lines:
 
 ```javascript
-// neckbeard: parse at edge, authorize object on server, cap at named load (250 rps)
+// neckbeard: parse at edge, authorize object on server, right-sized for real traffic (250 rps)
 app.get("/api/invoices/:id", requireAuth, async (req, res) => {
   const id = String(req.params.id || "").trim();
   if (!UUID_RE.test(id)) return res.status(400).json({ error: "Invalid invoice id" });
