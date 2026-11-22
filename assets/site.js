@@ -763,19 +763,102 @@
     let detailsOpen = true;
     let sharedOn = true;
     let boardTab = 'graph';
+    const LEVEL_META = {
+      off: {
+        dot: 'var(--faint)',
+        note: 'Rules paused · passive telemetry only',
+        guardVal: 'guard off',
+        guardColor: 'var(--muted)',
+        guardSub: '0 active blocks · VIBES 0.18',
+        compactPill: '⏸ guard paused',
+      },
+      lite: {
+        dot: 'var(--emerald)',
+        note: 'Fast checks · names skipped ceremony in 1 line',
+        guardVal: '3 blocked',
+        guardColor: 'var(--emerald)',
+        guardSub: 'destructive actions blocked · VIBES 0.18',
+        compactPill: '🛡️ 3 blocked',
+      },
+      full: {
+        dot: 'var(--emerald)',
+        note: 'All 3 checks + destructive command guard',
+        guardVal: '3 blocked',
+        guardColor: 'var(--emerald)',
+        guardSub: '4/4 fixed · VIBES 0.18',
+        compactPill: '🛡️ 3 blocked',
+      },
+      paranoid: {
+        dot: 'var(--amber)',
+        note: 'Strictest checks + challenges bloat & pipe-to-shell',
+        guardVal: '4 blocked',
+        guardColor: 'var(--amber)',
+        guardSub: '4/4 fixed · curl|sh & chmod 777 denied',
+        compactPill: '🛡️ 4 blocked (paranoid)',
+      },
+    };
     const levelBtns = $$('[data-band-level]');
     levelBtns.forEach((b) =>
       b.addEventListener('click', () => {
         const lvl = b.dataset.bandLevel;
+        const meta = LEVEL_META[lvl] || LEVEL_META.full;
         levelBtns.forEach((x) => x.classList.toggle('on', x === b));
         $('#bd-active-level').textContent = lvl;
+        if ($('#bd-dot')) $('#bd-dot').style.color = meta.dot;
+        if ($('#bd-compact-dot')) $('#bd-compact-dot').style.color = meta.dot;
+        if ($('#bd-level-note')) $('#bd-level-note').textContent = meta.note;
+        if ($('#bd-guard-val')) {
+          $('#bd-guard-val').textContent = meta.guardVal;
+          $('#bd-guard-val').style.color = meta.guardColor;
+        }
+        if ($('#bd-guard-sub')) $('#bd-guard-sub').textContent = meta.guardSub;
+        if ($('#bd-compact-guard')) $('#bd-compact-guard').textContent = meta.compactPill;
       })
     );
-    $('#bd-toggle-details')?.addEventListener('click', (e) => {
-      detailsOpen = !detailsOpen;
-      $('#bd-details-row').hidden = !detailsOpen;
-      e.currentTarget.textContent = detailsOpen ? 'Compact' : 'Details';
+    const setDetailsOpen = (open) => {
+      detailsOpen = open;
+      const mock = $('#bd-mock');
+      if (mock) mock.classList.toggle('is-compact', !detailsOpen);
+      if ($('#bd-top-expanded')) $('#bd-top-expanded').hidden = !detailsOpen;
+      if ($('#bd-top-compact')) $('#bd-top-compact').hidden = detailsOpen;
+      if ($('#bd-details-row')) $('#bd-details-row').hidden = !detailsOpen;
+      $('#bd-toggle-details')?.setAttribute('aria-expanded', String(detailsOpen));
+      $('#bd-toggle-compact')?.setAttribute('aria-expanded', String(detailsOpen));
+    };
+    $('#bd-toggle-details')?.addEventListener('click', () => setDetailsOpen(false));
+    $('#bd-toggle-compact')?.addEventListener('click', () => setDetailsOpen(true));
+    $('#bd-compact-expand')?.addEventListener('click', () => setDetailsOpen(true));
+
+    $('#bd-act-copy')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      const lvl = $('#bd-active-level')?.textContent || 'full';
+      const report = `NeckBeard Session Telemetry (level: ${lvl}) — $0.38 (7 turns, 48.2k tokens, 89% cache) · 86% code reuse (-158 net LOC) · 3 guard blocks · 4/4 findings fixed · 21/21 tests passing`;
+      try {
+        await navigator.clipboard.writeText(report);
+      } catch {}
+      btn.textContent = '✓ Copied';
+      setTimeout(() => {
+        btn.textContent = 'Copy Report';
+      }, 1400);
     });
+    $$('[data-band-nav]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const target = $(b.dataset.bandNav);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      })
+    );
+    $$('[data-band-board]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const board = $('.board-box');
+        if (board) {
+          board.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          board.style.borderColor = 'var(--emerald)';
+          setTimeout(() => {
+            board.style.borderColor = '';
+          }, 900);
+        }
+      })
+    );
     $('#bd-toggle-share')?.addEventListener('click', (e) => {
       sharedOn = !sharedOn;
       e.currentTarget.textContent = sharedOn ? '/neckbeard share off' : '/neckbeard share on';
@@ -783,6 +866,9 @@
         ? 'Shared in .neckbeard.json (committed to Git so every agent & teammate gets the map · private URLs/secrets auto-scrubbed)'
         : 'Local-only in ~/.config/neckbeard/projects/ (kept off Git via .git/info/exclude)';
       $('#bd-json-shared').textContent = String(sharedOn);
+      if ($('#bd-target-sub')) {
+        $('#bd-target-sub').textContent = sharedOn ? '.neckbeard.json (shared)' : '~/.config/neckbeard (local)';
+      }
     });
     $$('[data-board-tab]').forEach((b) =>
       b.addEventListener('click', () => {

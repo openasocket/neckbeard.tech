@@ -29,7 +29,7 @@
 <link rel="alternate" type="text/markdown" href="https://neckbeard.tech/index.md" title="NeckBeard (Markdown for AI Agents)">
 <link rel="agent-skills" type="application/json" href="https://neckbeard.tech/.well-known/agent-skills/index.json">
 <link rel="api-catalog" type="application/linkset+json" href="https://neckbeard.tech/.well-known/api-catalog">
-<link rel="stylesheet" href="assets/site.css?v=10">
+<link rel="stylesheet" href="assets/site.css?v=11">
 <style>
   /* Hyper-technical NeckBeard character mutter callouts & Easter egg styles */
   .trackpoint { cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; }
@@ -167,17 +167,26 @@
   @media (max-width: 920px) { .rv { grid-template-columns: 1fr; } .rv-code { min-height: 240px; border-right: 0; border-bottom: 1px solid var(--line); } }
 
   /* 06 interactive Claude Code band & trust-boundary graph */
-  .band-mock { margin-top: 28px; border: 1px solid var(--line-strong); border-radius: 16px; background: #090d0b; padding: 16px 20px; font-family: var(--mono); }
-  .bm-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; }
-  .bm-lvl { border: 1px solid var(--line); background: transparent; color: var(--muted); font: 600 12px var(--mono); padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+  [hidden] { display: none !important; }
+  .band-mock { margin-top: 28px; border: 1px solid var(--line-strong); border-radius: 16px; background: #090d0b; padding: 14px 18px; font-family: var(--mono); transition: padding 0.18s ease, border-color 0.18s ease; }
+  .band-mock.is-compact { padding: 11px 16px; }
+  .bm-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; }
+  .bm-actions { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+  .bm-lvl { border: 1px solid var(--line); background: transparent; color: var(--muted); font: 600 12px var(--mono); padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+  .bm-lvl:hover { color: var(--ink); border-color: rgba(238, 242, 239, 0.28); }
   .bm-lvl.on { background: var(--emerald); color: #050806; border-color: var(--emerald); }
+  .bm-lvl.bm-toggle { border-color: rgba(34, 197, 94, 0.42); color: var(--emerald); background: rgba(34, 197, 94, 0.08); }
+  .bm-lvl.bm-toggle:hover { background: rgba(34, 197, 94, 0.18); }
+  .bm-compact-trigger { display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(34, 197, 94, 0.35); background: rgba(34, 197, 94, 0.08); color: var(--ink); font: 700 12.5px var(--mono); padding: 4px 10px; border-radius: 8px; cursor: pointer; }
+  .bm-compact-trigger:hover { background: rgba(34, 197, 94, 0.16); }
+  .bm-note { font-size: 11.5px; color: var(--muted); margin-left: 4px; }
   .bm-pill { padding: 3px 9px; border-radius: 999px; font-size: 12px; background: rgba(34, 197, 94, 0.12); color: var(--emerald); }
   .bm-pill.warn { background: rgba(245, 158, 11, 0.14); color: var(--amber); }
   .bm-cols { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
   .bm-col span { display: block; font-size: 11px; color: var(--muted); }
   .bm-col b { display: block; font-size: 15px; color: var(--ink); margin-top: 2px; }
   .bm-col i { display: block; font-style: normal; font-size: 11px; color: var(--faint); margin-top: 2px; }
-  @media (max-width: 860px) { .bm-cols { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 860px) { .bm-cols { grid-template-columns: repeat(2, 1fr); } .bm-actions { margin-left: 0; } }
 
   .board-box { margin-top: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); padding: 20px; }
   .bb-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -535,33 +544,57 @@ export const REGION = "us-east-1";</pre>
     <p class="lead">With <code>/neckbeard map</code>, NeckBeard keeps an up-to-date map of where your app talks to the outside world and where sensitive data lives. In Claude Code (and Pi / Oh My Pi), it also displays a live status bar above your prompt and generates a local visual dashboard (<code>~/.config/neckbeard/telemetry/dashboard.html</code>)—with automatic <a href="https://www.itsavibe.ai">VIBES</a> (<code>.ai-audit/</code>) support and zero cloud tracking.</p>
 
     <!-- Interactive Claude Code Band Replica -->
-    <div class="band-mock" aria-label="Interactive Claude Code AbovePrompt Band Preview">
-      <div class="bm-top">
-        <span style="color:var(--emerald)">●</span>
-        <b id="bd-active-level" style="margin-right:6px">full</b>
+    <div class="band-mock" id="bd-mock" aria-label="Interactive Claude Code AbovePrompt Band Preview">
+      <!-- Expanded / Details Top Bar (matches hooks/band/register.tsx expandedDrawer = true) -->
+      <div class="bm-top" id="bd-top-expanded">
+        <span id="bd-dot" style="color:var(--emerald)">●</span>
+        <span aria-hidden="true">🧔</span>
         <button type="button" class="bm-lvl" data-band-level="off">off</button>
         <button type="button" class="bm-lvl" data-band-level="lite">lite</button>
         <button type="button" class="bm-lvl on" data-band-level="full">full</button>
         <button type="button" class="bm-lvl" data-band-level="paranoid">paranoid</button>
+        <span class="bm-note" id="bd-level-note">All 3 checks + destructive command guard</span>
+        <div class="bm-actions">
+          <button type="button" class="bm-lvl" id="bd-act-copy">Copy Report</button>
+          <button type="button" class="bm-lvl" data-band-nav="#review">Review</button>
+          <button type="button" class="bm-lvl" data-band-nav="#review">Audit</button>
+          <button type="button" class="bm-lvl" data-band-board="graph">Dashboard</button>
+          <button type="button" class="bm-lvl bm-toggle" id="bd-toggle-details" aria-expanded="true">Compact ▴</button>
+        </div>
+      </div>
+
+      <!-- Compact Single-Line Top Bar (matches hooks/band/register.tsx expandedDrawer = false) -->
+      <div class="bm-top" id="bd-top-compact" hidden>
+        <button type="button" class="bm-compact-trigger" id="bd-compact-expand" title="Click to expand HUD details">
+          <span id="bd-compact-dot" style="color:var(--emerald)">●</span>
+          <span>🧔</span>
+          <b id="bd-active-level">full</b>
+        </button>
         <span>$0.38</span>
-        <span class="muted">last $0.06</span>
         <span class="muted">4m 12s</span>
         <span>86% reuse</span>
         <span class="muted">+24/-182 LOC</span>
-        <span class="bm-pill">🛡️ 3 blocked</span>
+        <span class="bm-pill" id="bd-compact-guard">🛡️ 3 blocked</span>
         <span class="bm-pill">🔒 4/4 fixed</span>
         <span class="bm-pill">VIBES 0.18</span>
         <span class="bm-pill warn">⚠ +1 new map spot</span>
         <span style="color:var(--emerald)">✓ 21 tests</span>
-        <button type="button" class="bm-lvl" id="bd-toggle-details" style="margin-left:auto">Compact</button>
+        <div class="bm-actions">
+          <button type="button" class="bm-lvl" data-band-nav="#review">Review</button>
+          <button type="button" class="bm-lvl" data-band-nav="#review">Audit</button>
+          <button type="button" class="bm-lvl" data-band-board="graph">Dashboard</button>
+          <button type="button" class="bm-lvl bm-toggle" id="bd-toggle-compact" aria-expanded="false">Details ▾</button>
+        </div>
       </div>
+
+      <!-- Expanded Metric Cards Drawer -->
       <div class="bm-cols" id="bd-details-row">
         <div class="bm-col"><span>session cost</span><b>$0.38</b><i>last $0.06 · avg $0.05</i></div>
-        <div class="bm-col"><span>tokens used</span><b>48.2k</b><i>7 turns · cache 89%</i></div>
+        <div class="bm-col"><span>tokens &amp; time</span><b>48.2k</b><i>7 turns · 4m 12s · cache 89%</i></div>
         <div class="bm-col"><span>code reuse &amp; lines</span><b>86% reuse</b><i>6 reused · 1 new · -158 net lines</i></div>
-        <div class="bm-col"><span>safety &amp; guard</span><b style="color:var(--emerald)">3 blocked</b><i>4/4 fixed · risk 0.18</i></div>
-        <div class="bm-col"><span>traffic target</span><b>250 rps, 50k rows</b><i>.neckbeard.json (shared)</i></div>
-        <div class="bm-col"><span>map changes</span><b style="color:var(--amber)">+1 new</b><i>worker.js-&gt;proc</i></div>
+        <div class="bm-col"><span>safety &amp; guard</span><b id="bd-guard-val" style="color:var(--emerald)">3 blocked</b><i id="bd-guard-sub">4/4 fixed · VIBES 0.18</i></div>
+        <div class="bm-col"><span>traffic target</span><b>250 rps, 50k rows</b><i id="bd-target-sub">.neckbeard.json (shared)</i></div>
+        <div class="bm-col"><span>map &amp; gate tests</span><b style="color:var(--amber)">+1 new · <span style="color:var(--emerald)">✓ 21/21</span></b><i>worker.js-&gt;proc · verified</i></div>
       </div>
     </div>
 
@@ -757,6 +790,6 @@ export const REGION = "us-east-1";</pre>
   </div>
 </footer>
 
-<script src="assets/site.js?v=10"></script>
+<script src="assets/site.js?v=11"></script>
 </body>
 </html>
