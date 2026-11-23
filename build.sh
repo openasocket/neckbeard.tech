@@ -49,6 +49,7 @@ cp index.html favicon.ico CNAME dist/
 
 # Copy static assets & Markdown mirrors (including md/agents.md and md/index.md)
 cp -r assets md .well-known dist/
+rm -rf dist/assets/options
 
 # Copy Cloudflare headers/redirects and crawl discovery files
 cp _headers _redirects robots.txt sitemap.xml dist/

@@ -39,7 +39,7 @@ const SKILLS = [
   'neckbeard-gain'
 ];
 
-const FALLBACK_VERSION = '0.3.2';
+const FALLBACK_VERSION = '0.3.5';
 const SEMVER_RE = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 let cachedRelease = {
   version: FALLBACK_VERSION,

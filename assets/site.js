@@ -25,6 +25,47 @@
   ];
   let konamiActive = false;
   let forceHeroBgRedraw = false;
+  const PERSONAS = {
+    larry: {
+      emoji: '🧔',
+      img: 'assets/logo-dark.png',
+      alt: 'NeckBeard (Ashy Larry)',
+      cameoAlt: 'NeckBeard squinting through thick glasses',
+      konamiDown: '🧔 Powering down from Ring-0 Overdrive back to normal 3 a.m. paranoia. Thermal paste temperatures stabilizing.',
+      text: {
+        'hero-pronoun': 'He',
+        'rant-btn': '🧔 Hear him rant',
+        'lineage-em': 'He handles what could go wrong.',
+        'mutter-name-tp': '🧔 NeckBeard (3:14 a.m., ThinkPad X220):',
+        'mutter-tl': '(Translation: he keeps your code tiny and safe so you don\'t have to speak his language.)',
+        'mutter-name': '🧔 NeckBeard:',
+        'honor-obj': 'him',
+      },
+    },
+    lari: {
+      emoji: '👩‍💻',
+      img: 'assets/logo-lari-dark.png',
+      alt: 'NeckBeard (Ashy Lari)',
+      cameoAlt: 'Ashy Lari squinting through thick glasses',
+      konamiDown: '👩‍💻 Powering down from Ring-0 Overdrive back to normal 3 a.m. paranoia. Thermal paste temperatures stabilizing.',
+      text: {
+        'hero-pronoun': 'She',
+        'rant-btn': '👩‍💻 Hear her rant',
+        'lineage-em': 'She handles what could go wrong.',
+        'mutter-name-tp': '👩‍💻 Ashy Lari (3:14 a.m., ThinkPad X220):',
+        'mutter-tl': '(Translation: she keeps your code tiny and safe so you don\'t have to speak her language.)',
+        'mutter-name': '👩‍💻 Ashy Lari:',
+        'honor-obj': 'her',
+      },
+    },
+  };
+  let activePersona = (() => {
+    try {
+      return localStorage.getItem('nb-persona') === 'lari' ? 'lari' : 'larry';
+    } catch {
+      return 'larry';
+    }
+  })();
   const GLYPHS = '01<>{}[]=+*#%$/\\|';
   const hash = (a, b, c = 0) => {
     let h = (a * 374761393 + b * 668265263 + c * 2147483647) | 0;
@@ -411,14 +452,40 @@
       requestAnimationFrame(tick);
     }
     if (btn) btn.addEventListener('click', () => setFrozen(!frozen));
-    const loadImg = (src) =>
-      new Promise((resolve) => {
+    const imgCache = new Map();
+    const loadImg = (src) => {
+      if (imgCache.has(src)) return imgCache.get(src);
+      const p = new Promise((resolve) => {
         const im = new Image();
         im.onload = () => resolve(im);
         im.onerror = () => resolve(null);
         im.src = src;
       });
-    Promise.all(seq.filter((s) => s.img).map((s) => loadImg(s.img).then((im) => (s.img = im)))).then(start);
+      imgCache.set(src, p);
+      return p;
+    };
+    Promise.all(
+      seq.filter((s) => s.img).map((s) => {
+        const src = (s._src = s.img);
+        return loadImg(src).then((im) => {
+          if (s._src === src) s.img = im;
+        });
+      })
+    ).then(start);
+    return {
+      setImage(idx, src) {
+        if (!seq[idx]) return;
+        seq[idx]._src = src;
+        loadImg(src).then((im) => {
+          if (!im || seq[idx]._src !== src) return;
+          seq[idx].img = im;
+          if (ctx) {
+            layout();
+            frame(now());
+          }
+        });
+      },
+    };
   }
 
   const at = (sel, fn) => {
@@ -438,12 +505,13 @@
   );
 
   // Hero canvas: cycles between the NeckBeard face, "$1" (AND owner_id = $1), and "3" (Safe · Fast · Done)
-  at('#hero-canvas', (cv) =>
-    field(cv, {
+  let heroField = null;
+  at('#hero-canvas', (cv) => {
+    heroField = field(cv, {
       loop: true,
       btn: $('#motion'),
       seq: [
-        { img: 'assets/logo-dark.png', scale: (W) => (W > 920 ? 1.05 : 0.74), dur: 11 },
+        { img: PERSONAS[activePersona].img, scale: (W) => (W > 920 ? 1.05 : 0.74), dur: 11 },
         { glyph: '$1', dur: 5 },
         { glyph: '3', dur: 5 },
       ],
@@ -452,8 +520,51 @@
         const [top, bot] = band(cv);
         return [W * 0.5, (top + bot) / 2, Math.min((bot - top) / 0.85, W * 0.88)];
       },
-    })
-  );
+    });
+  });
+
+  function applyPersona(id, { persist = false } = {}) {
+    const next = id === 'lari' ? 'lari' : 'larry';
+    const changed = next !== activePersona;
+    activePersona = next;
+    const p = PERSONAS[next];
+    if (persist) {
+      try {
+        localStorage.setItem('nb-persona', next);
+      } catch {}
+    }
+    $$('.persona-toggle button[data-persona]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.persona === next));
+    });
+    $$('[data-persona-text]').forEach((el) => {
+      const val = p.text[el.dataset.personaText];
+      if (typeof val !== 'string') return;
+      const dec = el.closest('.decode');
+      if (dec && dec._syncPersona) {
+        dec._syncPersona();
+      } else {
+        el.textContent = val;
+      }
+    });
+    $$('.mutter img').forEach((img) => {
+      img.src = p.img;
+      img.alt = p.alt;
+    });
+    const cameoImg = $('.cameo img');
+    if (cameoImg) {
+      cameoImg.src = p.img;
+      cameoImg.alt = p.cameoAlt;
+    }
+    const iconLink = $('link[rel="icon"][type="image/png"]');
+    if (iconLink) iconLink.setAttribute('href', p.img);
+    if (changed && heroField) heroField.setImage(0, p.img);
+    return activePersona;
+  }
+
+  $$('.persona-toggle button[data-persona]').forEach((b) => {
+    b.addEventListener('click', () => applyPersona(b.dataset.persona, { persist: true }));
+  });
+  applyPersona(activePersona);
 
   // Section 01: Code-strip bars
   at('#chart', (chart) => {
@@ -964,14 +1075,24 @@
       vis.setAttribute('aria-hidden', 'true');
       vis.append(...el.childNodes);
       el.append(sr, vis);
-      const nodes = textNodes(vis).map((n) => [n, n.data]);
-      const total = nodes.reduce((a, [, s]) => a + s.length, 0);
+      const nodes = textNodes(vis).map((n) => [n, n.data, n.parentElement?.dataset?.personaText || null]);
+      let total = nodes.reduce((a, [, s]) => a + s.length, 0);
+      let decoded = false;
       const paint = (k) => {
         let i = 0;
         const q = Math.floor(performance.now() / 60);
         for (const [n, s] of nodes) {
           n.data = [...s].map((c) => (i++, /\s/.test(c) || k >= 0.25 + (0.75 * i) / total ? c : glyph(i, q))).join('');
         }
+      };
+      el._syncPersona = () => {
+        const texts = PERSONAS[activePersona].text;
+        for (const item of nodes) {
+          if (item[2] && typeof texts[item[2]] === 'string') item[1] = texts[item[2]];
+        }
+        total = nodes.reduce((a, [, s]) => a + s.length, 0);
+        sr.textContent = nodes.map(([, s]) => s.trim()).filter(Boolean).join(' ');
+        paint(decoded ? 1 : 0);
       };
       paint(0);
       once(
@@ -983,6 +1104,7 @@
             const k = (msTime - t0) / dur;
             paint(k);
             if (k < 1) requestAnimationFrame(step);
+            else decoded = true;
           })(t0);
         },
         0.55
@@ -1440,8 +1562,9 @@
       if (!cameo) {
         cameo = document.createElement('div');
         cameo.className = 'cameo';
+        const p = PERSONAS[activePersona];
         cameo.innerHTML =
-          '<p class="say" role="status" aria-live="polite"></p><img src="assets/logo-dark.png" width="128" height="128" alt="NeckBeard squinting through thick glasses">';
+          `<p class="say" role="status" aria-live="polite"></p><img src="${p.img}" width="128" height="128" alt="${p.cameoAlt}">`;
         document.body.append(cameo);
         say = cameo.firstChild;
         cameo.addEventListener('click', hide);
@@ -1530,7 +1653,7 @@
       const entry = BRIDGE_LOGS[logIdx++ % BRIDGE_LOGS.length];
       footerLog.innerHTML = '';
       const txt = document.createElement('div');
-      txt.textContent = `🧔 3:00 A.M. INCIDENT BRIDGE ARCHIVE (click neckbeard█ again for next entry):\n${entry}`;
+      txt.textContent = `${PERSONAS[activePersona].emoji} 3:00 A.M. INCIDENT BRIDGE ARCHIVE (click neckbeard█ again for next entry):\n${entry}`;
       const doomLaunchBtn = document.createElement('button');
       doomLaunchBtn.type = 'button';
       doomLaunchBtn.className = 'doom-btn cheat';
@@ -1627,7 +1750,7 @@
                 <button type="button" class="doom-btn" data-dkey="27">☰ Menu (Esc)</button>
               </div>
             </div>
-            <div class="doom-log" id="doom-stdout">🧔 Mounting /assets/doom.wasm (108 Wasm pages = 7.0 MB linear memory, 0 npm dependencies)...<br></div>
+            <div class="doom-log" id="doom-stdout">${PERSONAS[activePersona].emoji} Mounting /assets/doom.wasm (108 Wasm pages = 7.0 MB linear memory, 0 npm dependencies)...<br></div>
           </div>
         `;
         document.body.appendChild(doomModal);
@@ -1845,7 +1968,7 @@
           konamiPill.remove();
           konamiPill = null;
         }
-        popCameo('🧔 Powering down from Ring-0 Overdrive back to normal 3 a.m. paranoia. Thermal paste temperatures stabilizing.');
+        popCameo(PERSONAS[activePersona].konamiDown);
       }
       return konamiActive;
     }
@@ -1869,16 +1992,16 @@
         } else if (keyBuf.endsWith('vibe') || keyBuf.endsWith('yolo')) {
           keyBuf = '';
           popCameo(
-            '🧔 "Vibe coding"? I have been pager-on-call for your vibes since 2009. Your vibes just opened 4,000 unpooled Postgres connections inside a serverless lambda.'
+            `${PERSONAS[activePersona].emoji} "Vibe coding"? I have been pager-on-call for your vibes since 2009. Your vibes just opened 4,000 unpooled Postgres connections inside a serverless lambda.`
           );
         } else if (keyBuf.endsWith('kafka') || keyBuf.endsWith('micro')) {
           keyBuf = '';
           popCameo(
-            '🧔 You typed "kafka". Unless your .neckbeard.json load target exceeds 50,000 events/sec across 3 regions, put the distributed commit log down and use a Postgres table with an index.'
+            `${PERSONAS[activePersona].emoji} You typed "kafka". Unless your .neckbeard.json load target exceeds 50,000 events/sec across 3 regions, put the distributed commit log down and use a Postgres table with an index.`
           );
         } else if (keyBuf.endsWith(':wq') || keyBuf.endsWith('vim')) {
           keyBuf = '';
-          popCameo('🧔 :wq acknowledged. Buffer written cleanly. 0 swap files leaked, 0 mouse clicks required. You may exit the terminal.');
+          popCameo(`${PERSONAS[activePersona].emoji} :wq acknowledged. Buffer written cleanly. 0 swap files leaked, 0 mouse clicks required. You may exit the terminal.`);
         } else if (keyBuf.endsWith('doom') || keyBuf.endsWith('iddqd') || keyBuf.endsWith('idkfa')) {
           const trigger = keyBuf;
           keyBuf = '';
@@ -1896,7 +2019,7 @@
       '    | \\ | | ___  ___| | _| __ )  ___  __ _ _ __ __| |',
       '    |  \\| |/ _ \\/ __| |/ /  _ \\ / _ \\/ _` | \'__/ _` |',
       '    | |\\  |  __/ (__|   <| |_) |  __/ (_| | | | (_| |',
-      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.3.2',
+      '    |_| \\_|\\___|\\___|_|\\_\\____/ \\___|\\__,_|_|  \\__,_|  v0.3.5',
       '%c\n🧔 Inspecting the DOM? Good. 0 tracking pixels, 0 npm runtime dependencies, 0 MB of hydration slush.\nTry running %cneckbeard.audit()%c, %cneckbeard.blame()%c, %cneckbeard.coffee()%c, %cneckbeard.konami()%c, %cneckbeard.doom()%c, or %cneckbeard.sudo()%c in this console.',
     ].join('\n');
     console.log(
@@ -1917,9 +2040,10 @@
       'color:#c5d1c9;font-family:monospace'
     );
     window.neckbeard = {
-      version: '0.3.2',
-      releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.3.2',
+      version: '0.3.5',
+      releaseUrl: 'https://github.com/openasocket/NeckBeard/releases/tag/v0.3.5',
       totalRants: RANTS.length,
+      persona: (id) => (id ? applyPersona(id, { persist: true }) : activePersona),
       topics: () => Object.keys(RANTS_BY_TOPIC),
       rant: (topic) => { const q = nextRandomRant(topic); popCameo(q); return q; },
       konami: () => triggerKonamiOverdrive(),
@@ -1936,7 +2060,7 @@
       },
       blame: () => {
         const msg = 'git blame: 94% your AI agent on Friday at 16:58, 6% a copy-pasted StackOverflow snippet from 2014.';
-        popCameo('🧔 ' + msg);
+        popCameo(`${PERSONAS[activePersona].emoji} ${msg}`);
         return msg;
       },
       coffee: () => {

@@ -249,6 +249,10 @@
   .mutter i { font-style: normal; color: var(--faint); font-size: 11.5px; }
   .mutter-btn { font: 600 12px var(--mono); color: var(--amber); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.32); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; align-self: center; }
   .mutter-btn:hover { background: rgba(245, 158, 11, 0.2); }
+  .persona-toggle { display: inline-flex; align-items: center; padding: 2px; border-radius: 999px; border: 1px solid rgba(34, 197, 94, 0.3); background: rgba(7, 12, 9, 0.78); }
+  .persona-toggle button { font: 600 12px var(--mono); color: var(--muted); background: transparent; border: 0; border-radius: 999px; padding: 5px 11px; cursor: pointer; white-space: nowrap; transition: background 0.15s, color 0.15s; }
+  .persona-toggle button:hover { color: var(--ink); }
+  .persona-toggle button[aria-pressed="true"] { color: #050806; background: var(--emerald); }
   @media (max-width: 680px) { .mutter { flex-direction: column; } .mutter-btn { align-self: flex-start; } }
 
   /* 01 capabilities grid, lineage & code-strip chart */
@@ -451,14 +455,18 @@
 <header class="hero" id="top">
   <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <div class="intro">
-    <div class="kicker">NeckBeard <a class="holo" data-nb-version data-nb-release-link href="https://github.com/openasocket/NeckBeard/releases/tag/v0.3.2">v0.3.2</a> · Inspired by <a href="https://ponytail.dev">Ponytail</a> · <a href="#badge">Claim the Seal of Survival →</a></div>
+    <div class="kicker">NeckBeard <a class="holo" data-nb-version data-nb-release-link href="https://github.com/openasocket/NeckBeard/releases/tag/v0.3.5">v0.3.5</a> · Inspired by <a href="https://ponytail.dev">Ponytail</a> · <a href="#badge">Claim the Seal of Survival →</a></div>
     <h1 class="decode">Half the code.<br>None of the blind spots.<br><em>Built for everyday agent users.</em></h1>
-    <p>You don't need to know every security hole or database scaling trap—NeckBeard knows them for you. He automatically maps your project's risky spots, remembers how much traffic you expect, stops your AI agent from writing 300 lines of bloated code or exposing one user's data to another, and audits your whole repo in plain English.</p>
+    <p>You don't need to know every security hole or database scaling trap—NeckBeard knows them for you. <span data-persona-text="hero-pronoun">He</span> automatically maps your project's risky spots, remembers how much traffic you expect, stops your AI agent from writing 300 lines of bloated code or exposing one user's data to another, and audits your whole repo in plain English.</p>
     <div class="cta">
       <a class="pill" href="#install"><span class="trackpoint" aria-hidden="true"></span>Install in two lines</a>
       <a class="textlink" href="#lineage">See Map, Audit &amp; Guard capabilities ↓</a>
       <a class="textlink" href="#badge">Get the <span class="holo">NeckBeard Badge</span> →</a>
-      <button type="button" class="mutter-btn" id="hero-mutter">🧔 Hear him rant</button>
+      <button type="button" class="mutter-btn" id="hero-mutter" data-persona-text="rant-btn">🧔 Hear him rant</button>
+      <div class="persona-toggle" role="group" aria-label="Character variant">
+        <button type="button" data-persona="larry" aria-pressed="true">🧔 Ashy Larry</button>
+        <button type="button" data-persona="lari" aria-pressed="false">👩‍💻 Ashy Lari</button>
+      </div>
     </div>
   </div>
   <button id="motion" type="button" aria-pressed="false"><i>❚❚</i><span>Pause motion</span></button>
@@ -468,11 +476,11 @@
 <section id="lineage" class="sec"><div class="wrap"><div class="in">
   <div class="sh"><span class="no holo">01</span>What It Does</div>
   <div>
-    <h2 class="decode">You focus on what to build.<br><em>He handles what could go wrong.</em></h2>
+    <h2 class="decode">You focus on what to build.<br><em data-persona-text="lineage-em">He handles what could go wrong.</em></h2>
     <p class="lead">Most people using AI coding agents know what feature they want, not the twenty invisible ways an agent's first draft can leak customer data, crash under real traffic, or rack up a huge token bill. NeckBeard adds a seasoned principal engineer to your agent—inspired by <a href="https://ponytail.dev">Ponytail</a>'s code-shrinking question ladder and built from the ground up with automatic project mapping, plain-English repo audits, and a live safety guard.</p>
     <div class="mutter">
-      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
-      <div><b>🧔 NeckBeard (3:14 a.m., ThinkPad X220):</b> "Your agent just scaffolded a 5-layer <code>AbstractRepositoryFactoryBean</code> with an unauthenticated BOLA/IDOR vector, an <code>O(N²)</code> N+1 select loop, and zero socket backpressure. I deleted 290 lines, bound <code>owner_id = $2</code>, and went back to recompiling my kernel." <i>(Translation: he keeps your code tiny and safe so you don't have to speak his language.)</i></div>
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard (Ashy Larry)">
+      <div><b data-persona-text="mutter-name-tp">🧔 NeckBeard (3:14 a.m., ThinkPad X220):</b> "Your agent just scaffolded a 5-layer <code>AbstractRepositoryFactoryBean</code> with an unauthenticated BOLA/IDOR vector, an <code>O(N²)</code> N+1 select loop, and zero socket backpressure. I deleted 290 lines, bound <code>owner_id = $2</code>, and went back to recompiling my kernel." <i data-persona-text="mutter-tl">(Translation: he keeps your code tiny and safe so you don't have to speak his language.)</i></div>
     </div>
 
     <div class="cap-grid" aria-label="Core NeckBeard Capabilities">
@@ -509,7 +517,7 @@
         <div class="bar b0" style="--w:38%"><s></s><em>38%</em></div><div class="bar b1" style="--w:89%"><s></s><em>89%</em></div><div class="bar b2" style="--w:100%"><s></s><em>100%</em></div></div></div>
       <div class="m" data-v="0,0,100"><div class="ml"><b>&lt;2ms</b><span>live secret &amp; mistake guard</span></div><div>
         <div class="bar b0" style="--w:4%"><s></s><em>0%</em></div><div class="bar b1" style="--w:4%"><s></s><em>0%</em></div><div class="bar b2" style="--w:100%"><s></s><em>100% blocked pre-write</em></div></div></div>
-      <div class="legend"><span><i style="color:#3d4b42">{…}</i>no skill</span><span><i style="color:#718779">{…}</i>Ponytail (the minimalist inspiration)</span><span><i class="holo">{…}</i>NeckBeard <span data-nb-version>v0.3.2</span> (Safe · Right-Sized · Done)</span></div>
+      <div class="legend"><span><i style="color:#3d4b42">{…}</i>no skill</span><span><i style="color:#718779">{…}</i>Ponytail (the minimalist inspiration)</span><span><i class="holo">{…}</i>NeckBeard <span data-nb-version>v0.3.5</span> (Safe · Right-Sized · Done)</span></div>
     </div>
 
     <table class="diff-table" aria-label="Ponytail vs NeckBeard differentiation">
@@ -538,8 +546,8 @@
     <div class="count"><b id="cl-n">312</b><span id="cl-l">lines without NeckBeard (leaks other users’ invoices + uncapped database loop)</span><button class="replay" id="cl-replay" type="button">↻ replay</button></div>
     <canvas id="collapse-canvas" aria-hidden="true"></canvas>
     <div class="mutter">
-      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
-      <div><b>🧔 NeckBeard:</b> "312 lines of <code>try/catch</code> enterprise theater that catches generic <code>Exception</code>, dumps the raw Postgres DSN to <code>stdout</code>, and still lets <code>user_id=42</code> enumerate the entire <code>invoices</code> table via sequential UUIDv1 prediction. Eleven lines. Parameterized. Bounded. Ship it."</div>
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard (Ashy Larry)">
+      <div><b data-persona-text="mutter-name">🧔 NeckBeard:</b> "312 lines of <code>try/catch</code> enterprise theater that catches generic <code>Exception</code>, dumps the raw Postgres DSN to <code>stdout</code>, and still lets <code>user_id=42</code> enumerate the entire <code>invoices</code> table via sequential UUIDv1 prediction. Eleven lines. Parameterized. Bounded. Ship it."</div>
     </div>
     <p class="fine">Checking that the signed-in user actually owns the invoice (<code>AND owner_id = $2</code>), validating the ID upfront, and capping the query (<code>LIMIT 1</code>) are all baked into the 11 lines that survive.</p>
   </div>
@@ -572,8 +580,8 @@
       <li><span class="i">06</span><span class="q">Otherwise: write the smallest code that is Safe, Right-Sized, and Done.</span><span class="a">+ 1 test that proves bad input is blocked</span></li>
     </ol>
     <div class="mutter">
-      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
-      <div><b>🧔 NeckBeard:</b> "You asked for a CSV export button and your agent tried to provision a 3-broker Kafka cluster, a Redis pub/sub fan-out, and a dynamic plugin registry for 12 req/min of egress. Rung 1: delete the message broker. Rung 3: stream RFC 4180 over chunked HTTP."</div>
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard (Ashy Larry)">
+      <div><b data-persona-text="mutter-name">🧔 NeckBeard:</b> "You asked for a CSV export button and your agent tried to provision a 3-broker Kafka cluster, a Redis pub/sub fan-out, and a dynamic plugin registry for 12 req/min of egress. Rung 1: delete the message broker. Rung 3: stream RFC 4180 over chunked HTTP."</div>
     </div>
   </div>
 </div></div></section>
@@ -603,8 +611,8 @@ export const REGION = "us-east-1";</pre>
       </div>
     </div>
     <div class="mutter">
-      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard">
-      <div><b>🧔 NeckBeard:</b> "It tried to commit an entropy-validated <code>AWS_SECRET_ACCESS_KEY</code>, traverse <code>.ai-audit/iocs.d/../manifest.json</code> to invalidate your Ed25519 DSSE envelope, and pipe <code>curl -k</code> into <code>sudo bash</code> with <code>--no-verify</code>. <code>hooks/guard.js</code> intercepted the syscall in 0.8ms before the dirty page even hit the ext4 journal."</div>
+      <img src="assets/logo-dark.png" width="38" height="38" alt="NeckBeard (Ashy Larry)">
+      <div><b data-persona-text="mutter-name">🧔 NeckBeard:</b> "It tried to commit an entropy-validated <code>AWS_SECRET_ACCESS_KEY</code>, traverse <code>.ai-audit/iocs.d/../manifest.json</code> to invalidate your Ed25519 DSSE envelope, and pipe <code>curl -k</code> into <code>sudo bash</code> with <code>--no-verify</code>. <code>hooks/guard.js</code> intercepted the syscall in 0.8ms before the dirty page even hit the ext4 journal."</div>
     </div>
   </div>
 </div></div></section>
@@ -899,7 +907,7 @@ export const REGION = "us-east-1";</pre>
         <li>You <strong>built the project with NeckBeard</strong> turned on (<code>full</code> or <code>paranoid</code>), <strong>OR</strong></li>
         <li>You ran <strong><code>/neckbeard-audit</code></strong> on an existing repository and <strong>actually fixed</strong> the <strong>Must fix</strong> and <strong>Should fix</strong> issues it found.</li>
       </ol>
-      <div style="margin:6px 0 0;font-size:13px;color:var(--muted)"><em>Slapping the fedora onto an unaudited repo that leaks user data or crashes at 50 users will summon him to your 3 a.m. outage call.</em></div>
+      <div style="margin:6px 0 0;font-size:13px;color:var(--muted)"><em>Slapping the fedora onto an unaudited repo that leaks user data or crashes at 50 users will summon <span data-persona-text="honor-obj">him</span> to your 3 a.m. outage call.</em></div>
     </div>
 
     <div class="badge-grid">
@@ -978,17 +986,17 @@ export const REGION = "us-east-1";</pre>
         <h3>Universal Multi-Agent Auto-Installer &amp; Updater (<code>scripts/install-all.js</code>)</h3>
         <span>macOS · Linux · Windows · Zero Dependencies</span>
       </div>
-      <p>Have more than one AI coding tool installed? Clone the repo and run <code>node scripts/install-all.js</code> (or <code>npm run sync</code>). It automatically detects every compatible agent harness on your machine, installs or updates NeckBeard to <strong data-nb-version>v0.3.2</strong>, resolves legacy plugin collisions, and builds your local Command Center dashboard:</p>
+      <p>Have more than one AI coding tool installed? Clone the repo and run <code>node scripts/install-all.js</code> (or <code>npm run sync</code>). It automatically detects every compatible agent harness on your machine, installs or updates NeckBeard to <strong data-nb-version>v0.3.5</strong>, resolves legacy plugin collisions, and builds your local Command Center dashboard:</p>
       <div class="cmd" style="margin-top:14px"><pre id="snip-install-all" data-raw="git clone https://github.com/openasocket/NeckBeard.git && cd NeckBeard
 node scripts/install-all.js"><span class="p">$ </span>git clone https://github.com/openasocket/NeckBeard.git &amp;&amp; cd NeckBeard
 <span class="p">$ </span>node scripts/install-all.js</pre><button class="copy" type="button" data-copy-target="snip-install-all">copy</button></div>
-      <pre class="install-out" aria-label="Sample output of node scripts/install-all.js"><span class="hl">NeckBeard Multi-Harness Installer &amp; Updater (<span data-nb-version>v0.3.2</span> · darwin (arm64))</span>
+      <pre class="install-out" aria-label="Sample output of node scripts/install-all.js"><span class="hl">NeckBeard Multi-Harness Installer &amp; Updater (<span data-nb-version>v0.3.5</span> · darwin (arm64))</span>
 ──────────────────────────────────────────────────────────────────────────────────────
-  <span class="ok">✓</span> <span class="hl">Claude Code         </span> : CLI updated · cache synced -&gt; <span data-nb-version>v0.3.2</span>
-  <span class="ok">✓</span> <span class="hl">OpenAI Codex        </span> : cache synced -&gt; <span data-nb-version>v0.3.2</span> · disabled ponytail@ponytail collision
-  <span class="ok">✓</span> <span class="hl">Grok CLI            </span> : synced neckbeard -&gt; <span data-nb-version>v0.3.2</span> · enabled in config.toml
-  <span class="ok">✓</span> <span class="hl">Antigravity CLI     </span> : synced ~/.gemini/config/plugins/neckbeard -&gt; <span data-nb-version>v0.3.2</span>
-  <span class="ok">✓</span> <span class="hl">Gemini CLI          </span> : synced ~/.gemini/extensions/neckbeard -&gt; <span data-nb-version>v0.3.2</span>
+  <span class="ok">✓</span> <span class="hl">Claude Code         </span> : CLI updated · cache synced -&gt; <span data-nb-version>v0.3.5</span>
+  <span class="ok">✓</span> <span class="hl">OpenAI Codex        </span> : cache synced -&gt; <span data-nb-version>v0.3.5</span> · disabled ponytail@ponytail collision
+  <span class="ok">✓</span> <span class="hl">Grok CLI            </span> : synced neckbeard -&gt; <span data-nb-version>v0.3.5</span> · enabled in config.toml
+  <span class="ok">✓</span> <span class="hl">Antigravity CLI     </span> : synced ~/.gemini/config/plugins/neckbeard -&gt; <span data-nb-version>v0.3.5</span>
+  <span class="ok">✓</span> <span class="hl">Gemini CLI          </span> : synced ~/.gemini/extensions/neckbeard -&gt; <span data-nb-version>v0.3.5</span>
   <span class="skip">○ GitHub Copilot CLI   : skipped (not installed)</span>
   <span class="skip">○ Pi / Oh My Pi        : skipped (not installed)</span>
   <span class="skip">○ OpenCode / Kilo      : skipped (not installed)</span>
@@ -1014,6 +1022,7 @@ node scripts/install-all.js"><span class="p">$ </span>git clone https://github.c
       <dt>/neckbeard share on|off</dt><dd>choose whether <code>.neckbeard.json</code> is committed to Git so teammates &amp; subagents share the map (<code>on</code>, default, auto-scrubbed of private URLs/secrets) or kept only on your computer (<code>off</code>)</dd>
       <dt>/neckbeard lite|full|paranoid|off</dt><dd>adjust how strict NeckBeard is during a session (<code>full</code> is the default; <code>paranoid</code>—or its Ponytail-compatible alias <code>ultra</code>—also challenges unnecessary complexity and blocks risky terminal shortcuts)</dd>
       <dt>/neckbeard band [on|off|import|board]</dt><dd>toggle the live status bar above the Claude Code prompt, import past session stats, or launch your local HTML dashboard</dd>
+      <dt>/larry · /lari</dt><dd>switch or invoke the <strong>Ashy Larry</strong> or <strong>Ashy Lari</strong> character variant (you can also preview both live using the toggle at the top of this page)</dd>
     </dl>
   </div>
 </div></div></section>
@@ -1025,7 +1034,7 @@ node scripts/install-all.js"><span class="p">$ </span>git clone https://github.c
     <pre class="footer-log" id="footer-log" aria-live="polite"></pre>
     <div class="links">
       <a href="https://github.com/openasocket/NeckBeard">GitHub (openasocket/NeckBeard)</a>
-      <a data-nb-release-link href="https://github.com/openasocket/NeckBeard/releases/tag/v0.3.2">Release <span data-nb-version>v0.3.2</span></a>
+      <a data-nb-release-link href="https://github.com/openasocket/NeckBeard/releases/tag/v0.3.5">Release <span data-nb-version>v0.3.5</span></a>
       <a href="https://ponytail.dev">Inspired by Ponytail</a>
       <a href="https://www.itsavibe.ai">VIBES Protocol Compatible</a>
       <a href="#badge">Seal of Survival Badge</a>
@@ -1037,6 +1046,6 @@ node scripts/install-all.js"><span class="p">$ </span>git clone https://github.c
   </div>
 </footer>
 
-<script src="assets/site.js?v=15"></script>
+<script src="assets/site.js?v=16"></script>
 </body>
 </html>

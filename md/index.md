@@ -31,7 +31,7 @@ Most people using AI coding agents know what feature they want, not the twenty i
 
 ### Results
 
-| Metric | No Skill | Ponytail | NeckBeard v0.3.2 |
+| Metric | No Skill | Ponytail | NeckBeard v0.3.5 |
 |---|---|---|---|
 | **Lines of code written** | 100% | 48% | **44% (-56%)** |
 | **Data-ownership & traffic checks** | 38% | 89% | **100%** |
@@ -179,3 +179,4 @@ Then it walks through six steps and takes the first one that passes **Safe · Fa
 - `/neckbeard share on|off` — Toggle whether `.neckbeard.json` is shared in Git (auto-scrubbed) or kept local-only
 - `/neckbeard lite|full|paranoid|off` — Switch how strict NeckBeard is during a session (`full` is default; `ultra` is also accepted as an alias for `paranoid`)
 - `/neckbeard band [on|off|import|board]` — Control the live Claude Code status bar and local HTML board
+- `/larry · /lari` — Invoke the **Ashy Larry** or **Ashy Lari** character variant (interactive preview & `assets/logo-lari.png` / `assets/logo-lari-dark.png` available on [neckbeard.tech](https://neckbeard.tech))

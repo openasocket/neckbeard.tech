@@ -272,4 +272,22 @@ await test('Dynamic release version rewriter updates every data-nb-version eleme
   assert(rewritten.includes('https://github.com/openasocket/NeckBeard/releases/tag/v0.9.9'));
 });
 
+console.log('\n6. Ashy Lari Female Variant Assets & Persona Toggle:');
+await test('assets/logo-lari.png and assets/logo-lari-dark.png exist in assets/ and dist/assets/ as 677x845 PNGs without draft options/', () => {
+  for (const rel of ['assets/logo-lari.png', 'assets/logo-lari-dark.png']) {
+    const srcBuf = fs.readFileSync(rel);
+    const distBuf = fs.readFileSync(path.join('dist', rel));
+    assert.deepEqual(srcBuf, distBuf);
+    assert.equal(srcBuf.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+    assert.equal(srcBuf.readUInt32BE(16), 677);
+    assert.equal(srcBuf.readUInt32BE(20), 845);
+  }
+  assert.equal(fs.existsSync('dist/assets/options'), false);
+  const html = fs.readFileSync('dist/index.html', 'utf8');
+  assert(html.includes('data-persona="larry"'));
+  assert(html.includes('data-persona="lari"'));
+  const siteJs = fs.readFileSync('dist/assets/site.js', 'utf8');
+  assert(siteJs.includes('assets/logo-lari-dark.png'));
+});
+
 console.log(`\n${passed} passed, 0 failed\n`);
